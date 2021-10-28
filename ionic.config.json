@@ -1,0 +1,7 @@
+{
+  "name": "cs-demo-secure-storage-vue",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
