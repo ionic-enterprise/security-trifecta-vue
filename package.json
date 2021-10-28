@@ -1,13 +1,15 @@
 {
   "name": "cs-demo-secure-storage-vue",
+  "description": "Secure Storage Demo Application",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service serve",
+    "test:dev": "vue-cli-service test:unit --watch",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@capacitor/app": "1.0.5",
@@ -15,14 +17,20 @@
     "@capacitor/haptics": "1.1.2",
     "@capacitor/keyboard": "1.1.2",
     "@capacitor/status-bar": "1.0.5",
-    "@ionic/vue": "^5.4.0",
-    "@ionic/vue-router": "^5.4.0",
+    "@ionic-enterprise/identity-vault": "~5.1.1",
+    "@ionic-enterprise/secure-storage": "~2.1.1",
+    "@ionic/vue": "~6.0.0-rc.1",
+    "@ionic/vue-router": "~6.0.0-rc.1",
+    "axios": "~0.24.0",
     "core-js": "^3.6.5",
+    "vee-validate": "~4.5.4",
     "vue": "^3.2.1",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "yup": "~0.32.11"
   },
   "devDependencies": {
     "@capacitor/cli": "3.2.5",
+    "@ionic/prettier-config": "~2.0.0",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
@@ -37,9 +45,13 @@
     "@vue/eslint-config-typescript": "^5.0.2",
     "@vue/test-utils": "^2.0.0-0",
     "eslint": "^6.7.2",
+    "eslint-plugin-cypress": "~2.12.1",
     "eslint-plugin-vue": "^7.0.0-0",
+    "husky": "~7.0.4",
+    "prettier": "~2.4.1",
+    "pretty-quick": "~3.1.1",
     "typescript": "^4.3.5",
     "vue-jest": "^5.0.0-0"
   },
-  "description": "An Ionic project"
+  "prettier": "@ionic/prettier-config"
 }
