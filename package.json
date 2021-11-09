@@ -6,6 +6,7 @@
   "scripts": {
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "prepare": "husky install",
     "serve": "vue-cli-service serve",
     "test:dev": "vue-cli-service test:unit --watch",
     "test:e2e": "vue-cli-service test:e2e",
