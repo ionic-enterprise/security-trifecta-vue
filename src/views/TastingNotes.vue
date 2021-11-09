@@ -3,6 +3,10 @@
     <ion-header :transparent="true">
       <ion-toolbar>
         <ion-title>Tasting Notes</ion-title>
+        <ion-buttons slot="primary">
+          <ion-label>Dark</ion-label>
+          <ion-toggle v-model="prefersDarkMode"></ion-toggle>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -39,6 +43,7 @@
 
 <script lang="ts">
 import {
+  IonButtons,
   IonContent,
   IonFab,
   IonFabButton,
@@ -52,6 +57,7 @@ import {
   IonList,
   IonPage,
   IonTitle,
+  IonToggle,
   IonToolbar,
   modalController,
 } from '@ionic/vue';
@@ -59,10 +65,12 @@ import { add } from 'ionicons/icons';
 import { defineComponent } from 'vue';
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
 import useTastingNotes from '@/use/tasting-notes';
+import usePreferences from '@/use/preferences';
 
 export default defineComponent({
   name: 'TastingNotes',
   components: {
+    IonButtons,
     IonContent,
     IonFab,
     IonFabButton,
@@ -76,9 +84,11 @@ export default defineComponent({
     IonList,
     IonPage,
     IonTitle,
+    IonToggle,
     IonToolbar,
   },
   setup() {
+    const { prefersDarkMode } = usePreferences();
     const { notes, refresh, remove } = useTastingNotes();
 
     const presentNoteEditor = async (evt: Event, noteId?: number) => {
@@ -93,7 +103,7 @@ export default defineComponent({
 
     refresh();
 
-    return { add, notes, presentNoteEditor, remove };
+    return { add, notes, prefersDarkMode, presentNoteEditor, remove };
   },
 });
 </script>
