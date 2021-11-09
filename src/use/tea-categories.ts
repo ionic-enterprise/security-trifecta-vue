@@ -3,22 +3,22 @@ import { TeaCategory } from '@/models';
 import useBackendAPI from './backend-api';
 
 const { client } = useBackendAPI();
-const teas = ref<Array<TeaCategory>>([]);
+const categories = ref<Array<TeaCategory>>([]);
 
 const refresh = async (): Promise<void> => {
   const res = await client.get('/tea-categories');
-  teas.value = res.data;
+  categories.value = res.data;
 };
 
 const find = async (id: number): Promise<TeaCategory | undefined> => {
-  if (!teas.value.length) {
+  if (!categories.value.length) {
     await refresh();
   }
-  return teas.value.find((t) => t.id === id);
+  return categories.value.find((t) => t.id === id);
 };
 
 export default (): any => ({
+  categories,
   find,
   refresh,
-  teas,
 });

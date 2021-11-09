@@ -68,25 +68,25 @@ describe('useTea', () => {
     });
 
     it('extracts the tea categories', async () => {
-      const { refresh, teas } = useTeaCategories();
+      const { refresh, categories } = useTeaCategories();
       (client.get as any).mockResolvedValue({ data: teaCategories });
       await refresh();
-      expect(teas.value).toEqual(teaCategories);
+      expect(categories.value).toEqual(teaCategories);
     });
   });
 
   describe('find', () => {
     const { client } = useBackendAPI();
-    const { find, refresh, teas } = useTeaCategories();
+    const { find, refresh, categories } = useTeaCategories();
 
     beforeEach(() => {
-      teas.value = [];
+      categories.value = [];
       (client.get as any).mockResolvedValue({ data: teaCategories });
     });
 
     it('refreshes the tea data if it has not been loaded yet', async () => {
       const t = await find(6);
-      expect(teas.value.length).toEqual(8);
+      expect(categories.value.length).toEqual(8);
       expect(t).toEqual({
         id: 6,
         name: 'Puer',
