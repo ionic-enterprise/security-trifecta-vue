@@ -57,7 +57,7 @@ import {
 } from '@ionic/vue';
 import { add } from 'ionicons/icons';
 import { defineComponent } from 'vue';
-//import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
+import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
 import useTastingNotes from '@/use/tasting-notes';
 
 export default defineComponent({
@@ -83,7 +83,7 @@ export default defineComponent({
 
     const presentNoteEditor = async (evt: Event, noteId?: number) => {
       const modal = await modalController.create({
-        // component: AppTastingNoteEditor,
+        component: AppTastingNoteEditor,
         componentProps: { noteId },
         backdropDismiss: false,
         swipeToClose: true,

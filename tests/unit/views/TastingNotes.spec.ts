@@ -83,20 +83,20 @@ describe('TastingNotes.vue', () => {
     expect(items[2].text()).toContain('Puer Cake');
   });
 
-  //  describe('adding a new note', () => {
-  //    let modal: { present: () => Promise<void> };
-  //    beforeEach(() => {
-  //      modal = {
-  //        present: jest.fn().mockResolvedValue(undefined),
-  //      };
-  //      modalController.create = jest.fn().mockResolvedValue(modal);
-  //    });
-  //
-  //    it('displays the modal', async () => {
-  //      const wrapper = await mountView();
-  //      const button = wrapper.find('[data-testid="add-note-button"]');
-  //      await button.trigger('click');
-  //      expect(modal.present).toHaveBeenCalledTimes(1);
-  //    });
-  //  });
+  describe('adding a new note', () => {
+    let modal: { present: () => Promise<void> };
+    beforeEach(() => {
+      modal = {
+        present: jest.fn().mockResolvedValue(undefined),
+      };
+      modalController.create = jest.fn().mockResolvedValue(modal);
+    });
+
+    it('displays the modal', async () => {
+      const wrapper = await mountView();
+      const button = wrapper.find('[data-testid="add-note-button"]');
+      await button.trigger('click');
+      expect(modal.present).toHaveBeenCalledTimes(1);
+    });
+  });
 });
