@@ -3,7 +3,7 @@ import { BrowserVault, IdentityVaultConfig, Vault } from '@ionic-enterprise/iden
 
 export default (): any => {
   const createVault = (config: IdentityVaultConfig): Vault | BrowserVault =>
-    isPlatform('hybrid') ? new Vault(config) : new BrowserVault(config);
+    isPlatform('hybrid') ? new Vault(config) : new BrowserVault({ ...config, unlockVaultOnLoad: true });
 
   return { createVault };
 };

@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import router from '@/router';
-import useSession from '@/use/session';
+import useSessionVault from '@/use/session-vault';
 
-const { getSession, clearSession } = useSession();
+const { getSession, clearSession } = useSessionVault();
 
 const baseURL = 'https://cs-demo-api.herokuapp.com';
 
