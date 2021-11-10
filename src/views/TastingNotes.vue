@@ -108,4 +108,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+ion-toggle.ios {
+  margin-left: 1em;
+}
+</style>
