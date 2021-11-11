@@ -1,20 +1,16 @@
 import { ref, watch } from 'vue';
-import { Storage } from '@ionic/storage';
+import useStorage from '@/use/storage';
 
-const store = new Storage();
-const ready = store.create();
-
+const { getValue, setValue } = useStorage();
 const prefersDarkMode = ref(false);
 
 watch(prefersDarkMode, async (value) => {
-  await ready;
-  await store.set('darkMode', value);
+  await setValue('darkMode', value);
   document.body.classList.toggle('dark', value);
 });
 
 const load = async () => {
-  await ready;
-  prefersDarkMode.value = !!(await store.get('darkMode'));
+  prefersDarkMode.value = !!(await getValue('darkMode'));
 };
 
 export default () => ({
