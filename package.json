@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build && cap sync",
     "lint": "vue-cli-service lint",
     "prepare": "husky install",
     "serve": "vue-cli-service serve",

@@ -1,12 +1,14 @@
+import useAuth from '@/use/auth';
+import useTastingNotes from '@/use/tasting-notes';
 import TastingNotes from '@/views/TastingNotes.vue';
+import { modalController } from '@ionic/vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
-import { modalController } from '@ionic/vue';
-import useTastingNotes from '@/use/tasting-notes';
 
-jest.mock('@/use/vault-factory');
+jest.mock('@/use/auth');
 jest.mock('@/use/tasting-notes');
+jest.mock('@/use/vault-factory');
 
 describe('TastingNotes.vue', () => {
   let router: Router;
@@ -97,6 +99,26 @@ describe('TastingNotes.vue', () => {
       const button = wrapper.find('[data-testid="add-note-button"]');
       await button.trigger('click');
       expect(modal.present).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('logout clicked', () => {
+    it('performs a logout', async () => {
+      const { logout } = useAuth();
+      const wrapper = await mountView();
+      const button = wrapper.find('[data-testid="logout-button"]');
+      router.replace = jest.fn();
+      await button.trigger('click');
+      expect(logout).toHaveBeenCalledTimes(1);
+    });
+
+    it('navigates to the login after the logout action is complete', async () => {
+      const wrapper = await mountView();
+      const button = wrapper.find('[data-testid="logout-button"]');
+      router.replace = jest.fn();
+      await button.trigger('click');
+      expect(router.replace).toHaveBeenCalledTimes(1);
+      expect(router.replace).toHaveBeenCalledWith('/login');
     });
   });
 });

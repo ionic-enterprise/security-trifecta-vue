@@ -103,14 +103,14 @@ export default defineComponent({
     IonToolbar,
   },
   setup() {
-    const { canUnlock: canUnlockSession, setUnlockMode } = useSessionVault();
+    const { canUnlock: canUnlockSession, setUnlockMode, getSession } = useSessionVault();
     const { login } = useAuth();
     const router = useRouter();
     const errorMessage = ref('');
     const displayUnlockOptions = isPlatform('hybrid');
     const canUnlock = ref(false);
 
-    const mainRoute = '/home';
+    const mainRoute = '/';
 
     const unlockMode = ref<UnlockMode>('SessionPIN');
     const unlockModes = ref<Array<{ mode: UnlockMode; label: string }>>([
@@ -167,7 +167,8 @@ export default defineComponent({
       }
     };
 
-    const unlockClicked = () => {
+    const unlockClicked = async () => {
+      await getSession();
       router.replace(mainRoute);
     };
 

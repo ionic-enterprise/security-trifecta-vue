@@ -6,6 +6,9 @@
         <ion-buttons slot="primary">
           <ion-label>Dark</ion-label>
           <ion-toggle v-model="prefersDarkMode"></ion-toggle>
+          <ion-button data-testid="logout-button" @click="logoutClicked">
+            <ion-icon slot="icon-only" :icon="logOutOutline"></ion-icon>
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -43,6 +46,7 @@
 
 <script lang="ts">
 import {
+  IonButton,
   IonButtons,
   IonContent,
   IonFab,
@@ -66,10 +70,14 @@ import { defineComponent } from 'vue';
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
 import useTastingNotes from '@/use/tasting-notes';
 import usePreferences from '@/use/preferences';
+import { logOutOutline } from 'ionicons/icons';
+import useAuth from '@/use/auth';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'TastingNotes',
   components: {
+    IonButton,
     IonButtons,
     IonContent,
     IonFab,
@@ -90,6 +98,13 @@ export default defineComponent({
   setup() {
     const { prefersDarkMode } = usePreferences();
     const { notes, refresh, remove } = useTastingNotes();
+    const { logout } = useAuth();
+    const router = useRouter();
+
+    const logoutClicked = async (): Promise<void> => {
+      await logout();
+      router.replace('/login');
+    };
 
     const presentNoteEditor = async (evt: Event, noteId?: number) => {
       const modal = await modalController.create({
@@ -103,7 +118,7 @@ export default defineComponent({
 
     refresh();
 
-    return { add, notes, prefersDarkMode, presentNoteEditor, remove };
+    return { add, notes, logoutClicked, logOutOutline, prefersDarkMode, presentNoteEditor, remove };
   },
 });
 </script>

@@ -22,10 +22,7 @@ describe('Login.vue', () => {
   const mountView = async (): Promise<VueWrapper<typeof Login>> => {
     router = createRouter({
       history: createWebHistory(process.env.BASE_URL),
-      routes: [
-        { path: '/', component: Login },
-        { path: '/home', component: Login },
-      ],
+      routes: [{ path: '/', component: Login }],
     });
     router.push('/');
     await router.isReady();
@@ -214,12 +211,12 @@ describe('Login.vue', () => {
           expect(setUnlockMode).toHaveBeenCalledWith('SessionPIN');
         });
 
-        it('navigates to the teas page', async () => {
+        it('navigates to the start page', async () => {
           const button = wrapper.find('[data-testid="signin-button"]');
           router.replace = jest.fn();
           await button.trigger('click');
           expect(router.replace).toHaveBeenCalledTimes(1);
-          expect(router.replace).toHaveBeenCalledWith('/home');
+          expect(router.replace).toHaveBeenCalledWith('/');
         });
       });
 
@@ -295,14 +292,26 @@ describe('Login.vue', () => {
       expect(password.exists()).toBe(true);
     });
 
-    it('routes to the teas page on unlock clicked', async () => {
-      const wrapper = await mountView();
-      const unlock = wrapper.find('[data-testid="unlock-button"]');
-      router.replace = jest.fn();
-      unlock.trigger('click');
-      await flushPromises();
-      expect(router.replace).toHaveBeenCalledTimes(1);
-      expect(router.replace).toHaveBeenCalledWith('/home');
+    describe('unlock clicked', () => {
+      it('unlocks the vault', async () => {
+        const { getSession } = useSessionVault();
+        const wrapper = await mountView();
+        router.replace = jest.fn();
+        const unlock = wrapper.find('[data-testid="unlock-button"]');
+        await unlock.trigger('click');
+        await flushPromises();
+        expect(getSession).toHaveBeenCalledTimes(1);
+      });
+
+      it('routes to the start page', async () => {
+        const wrapper = await mountView();
+        const unlock = wrapper.find('[data-testid="unlock-button"]');
+        router.replace = jest.fn();
+        await unlock.trigger('click');
+        await flushPromises();
+        expect(router.replace).toHaveBeenCalledTimes(1);
+        expect(router.replace).toHaveBeenCalledWith('/');
+      });
     });
   });
 
