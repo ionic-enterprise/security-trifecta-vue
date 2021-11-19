@@ -1,12 +1,26 @@
 import useBackendAPI from '@/use/backend-api';
+import useDatabase from '@/use/database';
+import useSessionVault from '@/use/session-vault';
 import { TastingNote } from '@/models';
 import { ref } from 'vue';
+import { isPlatform } from '@ionic/vue';
 
 const { client } = useBackendAPI();
 
 const endpoint = '/user-tasting-notes';
 
 const notes = ref<Array<TastingNote>>([]);
+
+const load = async (): Promise<void> => {
+  if (isPlatform('hybrid')) {
+    const { mergeTastingNote } = useDatabase();
+    const { getSession } = useSessionVault();
+
+    const session = await getSession();
+    const notes = (await client.get(endpoint).then((res: { data?: any }) => res.data)) as Array<TastingNote>;
+    notes.forEach((n) => mergeTastingNote(n, session.user));
+  }
+};
 
 const refresh = async (): Promise<void> => {
   notes.value = await client.get(endpoint).then((res: { data?: any }) => res.data);
@@ -40,6 +54,7 @@ const remove = async (note: TastingNote): Promise<void> => {
 export default (): any => ({
   notes,
   find,
+  load,
   merge,
   refresh,
   remove,

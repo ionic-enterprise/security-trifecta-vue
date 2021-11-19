@@ -1,8 +1,17 @@
 import useBackendAPI from '@/use/backend-api';
+import useDatabase from '@/use/database';
+import useSessionVault from '@/use/session-vault';
 import useTastingNotes from '@/use/tasting-notes';
 import { TastingNote } from '@/models';
+import { isPlatform } from '@ionic/vue';
 
+jest.mock('@ionic/vue', () => {
+  const actual = jest.requireActual('@ionic/vue');
+  return { ...actual, isPlatform: jest.fn() };
+});
 jest.mock('@/use/backend-api');
+jest.mock('@/use/database');
+jest.mock('@/use/session-vault');
 
 describe('TastingNotesService', () => {
   const { client } = useBackendAPI();
@@ -38,13 +47,69 @@ describe('TastingNotesService', () => {
   };
 
   beforeEach(() => {
+    const { getSession } = useSessionVault();
     initializeTestData();
     jest.clearAllMocks();
     (client.get as any).mockResolvedValue({ data: tastingNotes });
+    (isPlatform as any).mockImplementation((key: string) => key === 'web');
+    (getSession as any).mockResolvedValue({
+      user: {
+        id: 314159,
+        firstName: 'Testy',
+        lastName: 'McTest',
+        email: 'test@test.com',
+      },
+      token: '123456789',
+    });
+  });
+
+  describe('load', () => {
+    describe('on mobile', () => {
+      beforeEach(() => {
+        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+      });
+
+      it('gets the tasting notes', async () => {
+        const { load } = useTastingNotes();
+        await load();
+        expect(client.get).toHaveBeenCalledTimes(1);
+        expect(client.get).toHaveBeenCalledWith('/user-tasting-notes');
+      });
+
+      it('merges each of the tasting notes', async () => {
+        const { mergeTastingNote } = useDatabase();
+        const { load } = useTastingNotes();
+        await load();
+        expect(mergeTastingNote).toHaveBeenCalledTimes(tastingNotes.length);
+        tastingNotes.forEach((n) =>
+          expect(mergeTastingNote).toHaveBeenCalledWith(n, {
+            id: 314159,
+            firstName: 'Testy',
+            lastName: 'McTest',
+            email: 'test@test.com',
+          })
+        );
+      });
+    });
+
+    describe('on web', () => {
+      it('does not load the tasting notes', async () => {
+        const { load } = useTastingNotes();
+        await load();
+        expect(client.get).not.toHaveBeenCalled();
+      });
+
+      it('does not merge the tasting notes', async () => {
+        const { mergeTastingNote } = useDatabase();
+        const { load } = useTastingNotes();
+        await load();
+        expect(mergeTastingNote).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('refresh', () => {
-    it('gets the tea categories', async () => {
+    it('gets the tasting notes', async () => {
       const { refresh } = useTastingNotes();
       await refresh();
       expect(client.get).toHaveBeenCalledTimes(1);

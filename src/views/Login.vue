@@ -83,6 +83,7 @@ import { useRouter } from 'vue-router';
 import { object as yupObject, string as yupString } from 'yup';
 import useAuth from '@/use/auth';
 import useSessionVault, { UnlockMode } from '@/use/session-vault';
+import useTastingNotes from '@/use/tasting-notes';
 
 export default defineComponent({
   name: 'Login',
@@ -104,6 +105,7 @@ export default defineComponent({
   },
   setup() {
     const { canUnlock: canUnlockSession, setUnlockMode, getSession } = useSessionVault();
+    const { load: loadTastingNotes } = useTastingNotes();
     const { login } = useAuth();
     const router = useRouter();
     const errorMessage = ref('');
@@ -159,6 +161,7 @@ export default defineComponent({
         canUnlock.value = false;
       } else {
         if (await login(email.value as string, password.value as string)) {
+          await loadTastingNotes();
           setUnlockMode(unlockMode.value);
           router.replace(mainRoute);
         } else {

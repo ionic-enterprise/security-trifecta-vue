@@ -1,5 +1,6 @@
 import useAuth from '@/use/auth';
 import useSessionVault from '@/use/session-vault';
+import useTastingNotes from '@/use/tasting-notes';
 import Login from '@/views/Login.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
 import { isPlatform } from '@ionic/vue';
@@ -14,6 +15,7 @@ jest.mock('@ionic/vue', () => {
 });
 jest.mock('@/use/auth');
 jest.mock('@/use/session-vault');
+jest.mock('@/use/tasting-notes');
 
 describe('Login.vue', () => {
   let currentPlatform = 'hybrid';
@@ -198,15 +200,23 @@ describe('Login.vue', () => {
         it('does not show an error', async () => {
           const button = wrapper.find('[data-testid="signin-button"]');
           const msg = wrapper.find('[data-testid="message-area"]');
-          button.trigger('click');
+          await button.trigger('click');
           await flushPromises();
           expect(msg.text()).toBe('');
+        });
+
+        it('loads the tasting notes into the database', async () => {
+          const { load } = useTastingNotes();
+          const button = wrapper.find('[data-testid="signin-button"]');
+          await button.trigger('click');
+          expect(load).toHaveBeenCalledTimes(1);
         });
 
         it('sets the desired unlock mode', async () => {
           const { setUnlockMode } = useSessionVault();
           const button = wrapper.find('[data-testid="signin-button"]');
           await button.trigger('click');
+          await flushPromises();
           expect(setUnlockMode).toHaveBeenCalledTimes(1);
           expect(setUnlockMode).toHaveBeenCalledWith('SessionPIN');
         });
@@ -215,6 +225,7 @@ describe('Login.vue', () => {
           const button = wrapper.find('[data-testid="signin-button"]');
           router.replace = jest.fn();
           await button.trigger('click');
+          await flushPromises();
           expect(router.replace).toHaveBeenCalledTimes(1);
           expect(router.replace).toHaveBeenCalledWith('/');
         });
@@ -234,7 +245,14 @@ describe('Login.vue', () => {
           expect(msg.text()).toBe('Invalid email and/or password');
         });
 
-        it('navigates to the root page', async () => {
+        it('loads the tasting notes into the database', async () => {
+          const { load } = useTastingNotes();
+          const button = wrapper.find('[data-testid="signin-button"]');
+          await button.trigger('click');
+          expect(load).not.toHaveBeenCalled();
+        });
+
+        it('does not navigate', async () => {
           const button = wrapper.find('[data-testid="signin-button"]');
           router.replace = jest.fn();
           button.trigger('click');
