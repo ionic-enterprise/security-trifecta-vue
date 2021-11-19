@@ -1,6 +1,7 @@
 import useAuth from '@/use/auth';
 import useSessionVault from '@/use/session-vault';
 import useTastingNotes from '@/use/tasting-notes';
+import useTeaCategories from '@/use/tea-categories';
 import Login from '@/views/Login.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
 import { isPlatform } from '@ionic/vue';
@@ -16,6 +17,7 @@ jest.mock('@ionic/vue', () => {
 jest.mock('@/use/auth');
 jest.mock('@/use/session-vault');
 jest.mock('@/use/tasting-notes');
+jest.mock('@/use/tea-categories');
 
 describe('Login.vue', () => {
   let currentPlatform = 'hybrid';
@@ -186,7 +188,7 @@ describe('Login.vue', () => {
       it('performs the login', async () => {
         const { login } = useAuth();
         const button = wrapper.find('[data-testid="signin-button"]');
-        button.trigger('click');
+        await button.trigger('click');
         expect(login).toHaveBeenCalledTimes(1);
         expect(login).toHaveBeenCalledWith('test@test.com', 'test');
       });
@@ -209,6 +211,15 @@ describe('Login.vue', () => {
           const { load } = useTastingNotes();
           const button = wrapper.find('[data-testid="signin-button"]');
           await button.trigger('click');
+          await flushPromises();
+          expect(load).toHaveBeenCalledTimes(1);
+        });
+
+        it('loads the tea categories into the database', async () => {
+          const { load } = useTeaCategories();
+          const button = wrapper.find('[data-testid="signin-button"]');
+          await button.trigger('click');
+          await flushPromises();
           expect(load).toHaveBeenCalledTimes(1);
         });
 

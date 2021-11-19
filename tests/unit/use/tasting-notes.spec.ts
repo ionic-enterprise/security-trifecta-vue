@@ -13,7 +13,7 @@ jest.mock('@/use/backend-api');
 jest.mock('@/use/database');
 jest.mock('@/use/session-vault');
 
-describe('TastingNotesService', () => {
+describe('useTastingNotes', () => {
   const { client } = useBackendAPI();
   let tastingNotes: Array<TastingNote>;
 

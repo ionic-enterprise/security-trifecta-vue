@@ -1,10 +1,18 @@
 import useBackendAPI from '@/use/backend-api';
+import useDatabase from '@/use/database';
 import useTeaCategories from '@/use/tea-categories';
 import { TeaCategory } from '@/models';
+import { isPlatform } from '@ionic/vue';
 
+jest.mock('@ionic/vue', () => {
+  const actual = jest.requireActual('@ionic/vue');
+  return { ...actual, isPlatform: jest.fn() };
+});
 jest.mock('@/use/backend-api');
+jest.mock('@/use/database');
 
-describe('useTea', () => {
+describe('useTeaCategories', () => {
+  const { client } = useBackendAPI();
   let teaCategories: Array<TeaCategory>;
 
   const initializeTestData = () => {
@@ -55,11 +63,49 @@ describe('useTea', () => {
   beforeEach(() => {
     initializeTestData();
     jest.clearAllMocks();
+    (client.get as any).mockResolvedValue({ data: teaCategories });
+    (isPlatform as any).mockImplementation((key: string) => key === 'web');
+  });
+
+  describe('load', () => {
+    describe('on mobile', () => {
+      beforeEach(() => {
+        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+      });
+
+      it('gets the tea categories', async () => {
+        const { load } = useTeaCategories();
+        await load();
+        expect(client.get).toHaveBeenCalledTimes(1);
+        expect(client.get).toHaveBeenCalledWith('/tea-categories');
+      });
+
+      it('merges each of the tasting notes', async () => {
+        const { mergeTeaCategory } = useDatabase();
+        const { load } = useTeaCategories();
+        await load();
+        expect(mergeTeaCategory).toHaveBeenCalledTimes(teaCategories.length);
+        teaCategories.forEach((cat) => expect(mergeTeaCategory).toHaveBeenCalledWith(cat));
+      });
+    });
+
+    describe('on web', () => {
+      it('does not load the tasting notes', async () => {
+        const { load } = useTeaCategories();
+        await load();
+        expect(client.get).not.toHaveBeenCalled();
+      });
+
+      it('does not merge the tasting notes', async () => {
+        const { mergeTastingNote } = useDatabase();
+        const { load } = useTeaCategories();
+        await load();
+        expect(mergeTastingNote).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('refresh', () => {
-    const { client } = useBackendAPI();
-
     it('gets the tea categories', async () => {
       const { refresh } = useTeaCategories();
       await refresh();
@@ -69,7 +115,6 @@ describe('useTea', () => {
 
     it('extracts the tea categories', async () => {
       const { refresh, categories } = useTeaCategories();
-      (client.get as any).mockResolvedValue({ data: teaCategories });
       await refresh();
       expect(categories.value).toEqual(teaCategories);
     });
@@ -81,7 +126,6 @@ describe('useTea', () => {
 
     beforeEach(() => {
       categories.value = [];
-      (client.get as any).mockResolvedValue({ data: teaCategories });
     });
 
     it('refreshes the tea data if it has not been loaded yet', async () => {
