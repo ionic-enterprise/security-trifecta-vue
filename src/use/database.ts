@@ -68,7 +68,7 @@ const getTeaCategories = async (): Promise<Array<TeaCategory>> => {
   if ((await isReady()) && handle) {
     await handle.transaction((tx) =>
       tx.executeSql(
-        "SELECT id, name, description FROM TeaCategories WHERE syncStatus != 'DELETE' ORDER BY name",
+        "SELECT id, name, description FROM TeaCategories WHERE coalesce(syncStatus, '') != 'DELETE' ORDER BY name",
         [],
         // tslint:disable-next-line:variable-name
         (_t: any, r: any) => {
@@ -87,8 +87,8 @@ const getTastingNotes = async (user: User): Promise<Array<TastingNote>> => {
   if ((await isReady()) && handle) {
     await handle.transaction((tx) =>
       tx.executeSql(
-        'SELECT id, name, brand, notes, rating, teaCategoryId FROM TeaCategories' +
-          " WHERE syncStatus != 'DELETE' AND userId = ? ORDER BY name",
+        'SELECT id, name, brand, notes, rating, teaCategoryId FROM TastingNotes' +
+          " WHERE coalesce(syncStatus, '') != 'DELETE' AND userId = ? ORDER BY name",
         [user.id],
         // tslint:disable-next-line:variable-name
         (_t: any, r: any) => {

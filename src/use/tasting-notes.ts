@@ -23,7 +23,14 @@ const load = async (): Promise<void> => {
 };
 
 const refresh = async (): Promise<void> => {
-  notes.value = await client.get(endpoint).then((res: { data?: any }) => res.data);
+  if (isPlatform('hybrid')) {
+    const { getTastingNotes } = useDatabase();
+    const { getSession } = useSessionVault();
+    const session = await getSession();
+    notes.value = await getTastingNotes(session.user);
+  } else {
+    notes.value = await client.get(endpoint).then((res: { data?: any }) => res.data);
+  }
 };
 
 const find = async (id: number): Promise<TastingNote | undefined> => {

@@ -11,15 +11,19 @@ const endpoint = '/tea-categories';
 const load = async (): Promise<void> => {
   if (isPlatform('hybrid')) {
     const { mergeTeaCategory } = useDatabase();
-
     const cats = (await client.get(endpoint).then((res: { data?: any }) => res.data)) as Array<TeaCategory>;
     cats.forEach((cat) => mergeTeaCategory(cat));
   }
 };
 
 const refresh = async (): Promise<void> => {
-  const res = await client.get(endpoint);
-  categories.value = res.data;
+  if (isPlatform('hybrid')) {
+    const { getTeaCategories } = useDatabase();
+    categories.value = await getTeaCategories();
+  } else {
+    const res = await client.get(endpoint);
+    categories.value = res.data;
+  }
 };
 
 const find = async (id: number): Promise<TeaCategory | undefined> => {

@@ -105,21 +105,50 @@ describe('useTastingNotes', () => {
         await load();
         expect(mergeTastingNote).not.toHaveBeenCalled();
       });
+
+      it('populates the notes data', async () => {
+        const { refresh, notes } = useTastingNotes();
+        await refresh();
+        expect(notes.value).toEqual(tastingNotes);
+      });
     });
   });
 
   describe('refresh', () => {
-    it('gets the tasting notes', async () => {
-      const { refresh } = useTastingNotes();
-      await refresh();
-      expect(client.get).toHaveBeenCalledTimes(1);
-      expect(client.get).toHaveBeenCalledWith('/user-tasting-notes');
+    describe('on mobile', () => {
+      beforeEach(() => {
+        const { getTastingNotes } = useDatabase();
+        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        (getTastingNotes as any).mockResolvedValue(tastingNotes);
+      });
+
+      it('gets the tasting notes from the database', async () => {
+        const { getTastingNotes } = useDatabase();
+        const { refresh } = useTastingNotes();
+        await refresh();
+        expect(getTastingNotes).toHaveBeenCalledTimes(1);
+        expect(getTastingNotes).toHaveBeenCalledWith({
+          id: 314159,
+          firstName: 'Testy',
+          lastName: 'McTest',
+          email: 'test@test.com',
+        });
+      });
     });
 
-    it('populates the notes data', async () => {
-      const { refresh, notes } = useTastingNotes();
-      await refresh();
-      expect(notes.value).toEqual(tastingNotes);
+    describe('on mobile', () => {
+      it('gets the tasting notes', async () => {
+        const { refresh } = useTastingNotes();
+        await refresh();
+        expect(client.get).toHaveBeenCalledTimes(1);
+        expect(client.get).toHaveBeenCalledWith('/user-tasting-notes');
+      });
+
+      it('populates the notes data', async () => {
+        const { refresh, notes } = useTastingNotes();
+        await refresh();
+        expect(notes.value).toEqual(tastingNotes);
+      });
     });
   });
 

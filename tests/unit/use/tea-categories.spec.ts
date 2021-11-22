@@ -106,17 +106,40 @@ describe('useTeaCategories', () => {
   });
 
   describe('refresh', () => {
-    it('gets the tea categories', async () => {
-      const { refresh } = useTeaCategories();
-      await refresh();
-      expect(client.get).toHaveBeenCalledTimes(1);
-      expect(client.get).toHaveBeenCalledWith('/tea-categories');
+    describe('on mobile', () => {
+      beforeEach(() => {
+        const { getTeaCategories } = useDatabase();
+        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        (getTeaCategories as any).mockResolvedValue(teaCategories);
+      });
+
+      it('gets the tea categories from the database', async () => {
+        const { refresh } = useTeaCategories();
+        const { getTeaCategories } = useDatabase();
+        await refresh();
+        expect(getTeaCategories).toHaveBeenCalledTimes(1);
+      });
+
+      it('extracts the tea categories', async () => {
+        const { refresh, categories } = useTeaCategories();
+        await refresh();
+        expect(categories.value).toEqual(teaCategories);
+      });
     });
 
-    it('extracts the tea categories', async () => {
-      const { refresh, categories } = useTeaCategories();
-      await refresh();
-      expect(categories.value).toEqual(teaCategories);
+    describe('on web', () => {
+      it('gets the tea categories', async () => {
+        const { refresh } = useTeaCategories();
+        await refresh();
+        expect(client.get).toHaveBeenCalledTimes(1);
+        expect(client.get).toHaveBeenCalledWith('/tea-categories');
+      });
+
+      it('extracts the tea categories', async () => {
+        const { refresh, categories } = useTeaCategories();
+        await refresh();
+        expect(categories.value).toEqual(teaCategories);
+      });
     });
   });
 
