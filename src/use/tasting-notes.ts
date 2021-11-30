@@ -40,9 +40,26 @@ const find = async (id: number): Promise<TastingNote | undefined> => {
   return notes.value.find((n) => n.id === id);
 };
 
-const merge = async (note: TastingNote): Promise<TastingNote> => {
+const post = async (note: TastingNote): Promise<TastingNote> => {
   const url = endpoint + (note.id ? `/${note.id}` : '');
   const { data } = await client.post(url, note);
+  return data;
+};
+
+const merge = async (note: TastingNote): Promise<TastingNote | undefined> => {
+  let data: TastingNote;
+
+  if (isPlatform('hybrid')) {
+    const { addTastingNote, updateTastingNote } = useDatabase();
+    const { getSession } = useSessionVault();
+    const session = await getSession();
+    data = note.id
+      ? (await updateTastingNote(note, session.user)) || note
+      : (await addTastingNote(note, session.user)) || note;
+  } else {
+    data = await post(note);
+  }
+
   const idx = notes.value.findIndex((n) => n.id === data.id);
   if (idx > -1) {
     notes.value[idx] = data;

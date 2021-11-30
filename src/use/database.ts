@@ -45,7 +45,7 @@ const createTables = (transaction: DbTransaction): void => {
       name,
       { name: 'brand', type: 'TEXT' },
       { name: 'notes', type: 'TEXT' },
-      { name: 'rating', type: 'TEXT' },
+      { name: 'rating', type: 'INTEGER' },
       { name: 'teaCategoryId', type: 'INTEGER' },
       { name: 'userId', type: 'INTEGER' },
       syncStatus,
@@ -102,9 +102,9 @@ const getTastingNotes = async (user: User): Promise<Array<TastingNote>> => {
   return notes;
 };
 
-const addTastingNote = async (note: TastingNote, user: User): Promise<void> => {
+const addTastingNote = async (note: TastingNote, user: User): Promise<TastingNote | undefined> => {
   if ((await isReady()) && handle) {
-    const n = { ...note };
+    const n = { ...note, syncStatus: 'INSERT' as 'INSERT' };
     await handle.transaction((tx) => {
       tx.executeSql(
         'SELECT COALESCE(MAX(id), 0) + 1 AS newId FROM TastingNotes',
@@ -114,8 +114,8 @@ const addTastingNote = async (note: TastingNote, user: User): Promise<void> => {
           n.id = r.rows.item(0).newId;
           tx.executeSql(
             'INSERT INTO TastingNotes (id, name, brand, notes, rating, teaCategoryId, userId, syncStatus)' +
-              ' VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [n.id, n.name, n.brand, n.notes, n.rating, n.teaCategoryId, user.id, 'INSERT'],
+              ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [n.id, n.name, n.brand, n.notes, n.rating, n.teaCategoryId, user.id, n.syncStatus],
             () => {
               null;
             }
@@ -123,6 +123,7 @@ const addTastingNote = async (note: TastingNote, user: User): Promise<void> => {
         }
       );
     });
+    return n;
   }
 };
 
@@ -183,19 +184,21 @@ const trimTastingNotes = async (idsToKeep: Array<number>, user: User): Promise<v
   }
 };
 
-const updateTastingNote = async (note: TastingNote, user: User): Promise<void> => {
+const updateTastingNote = async (note: TastingNote, user: User): Promise<TastingNote | undefined> => {
   if ((await isReady()) && handle) {
+    const n = { ...note, syncStatus: !note.syncStatus ? 'UPDATE' : note.syncStatus };
+    console.log('updating', n);
     await handle.transaction((tx) => {
       tx.executeSql(
-        'UPDATE TastingNotes SET name = ?, brand = ?, notes = ?, rating = ?, teaCategoryId = ?,' +
-          " syncStatus = CASE syncStatus WHEN 'INSERT' then 'INSERT' when 'DELETE' then 'DELETE' else 'UPDATE' END" +
-          ' WHERE syncStatus is NULL AND userId = ? AND id = ?',
-        [note.name, note.brand, note.notes, note.rating, note.teaCategoryId, user.id, note.id],
+        'UPDATE TastingNotes SET name = ?, brand = ?, notes = ?, rating = ?, teaCategoryId = ?, syncStatus = ?' +
+          ' WHERE userId = ? AND id = ?',
+        [n.name, n.brand, n.notes, n.rating, n.teaCategoryId, n.syncStatus, user.id, n.id],
         () => {
           null;
         }
       );
     });
+    return n;
   }
 };
 

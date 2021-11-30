@@ -5,4 +5,5 @@ export interface TastingNote {
   notes: string;
   rating: number;
   teaCategoryId: number;
+  syncStatus?: 'INSERT' | 'UPDATE' | 'DELETE' | null;
 }

@@ -48,9 +48,11 @@ describe('useTastingNotes', () => {
 
   beforeEach(() => {
     const { getSession } = useSessionVault();
+    const { getTastingNotes } = useDatabase();
     initializeTestData();
     jest.clearAllMocks();
     (client.get as any).mockResolvedValue({ data: tastingNotes });
+    (getTastingNotes as any).mockResolvedValue(tastingNotes);
     (isPlatform as any).mockImplementation((key: string) => key === 'web');
     (getSession as any).mockResolvedValue({
       user: {
@@ -117,9 +119,7 @@ describe('useTastingNotes', () => {
   describe('refresh', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        const { getTastingNotes } = useDatabase();
         (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
-        (getTastingNotes as any).mockResolvedValue(tastingNotes);
       });
 
       it('gets the tasting notes from the database', async () => {
@@ -136,7 +136,7 @@ describe('useTastingNotes', () => {
       });
     });
 
-    describe('on mobile', () => {
+    describe('on the web', () => {
       it('gets the tasting notes', async () => {
         const { refresh } = useTastingNotes();
         await refresh();
@@ -206,24 +206,59 @@ describe('useTastingNotes', () => {
         teaCategoryId: 3,
       };
 
-      beforeEach(() => {
-        (client.post as any).mockResolvedValue({ data: { id: 73, ...note } });
+      describe('on mobile', () => {
+        beforeEach(() => {
+          const { addTastingNote } = useDatabase();
+          (addTastingNote as any).mockResolvedValue({ id: 73, syncStatus: 'INSERT' as 'INSERT', ...note });
+          (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        });
+
+        it('adds the note to the database', async () => {
+          const { addTastingNote } = useDatabase();
+          await merge(note);
+          expect(addTastingNote).toHaveBeenCalledTimes(1);
+          expect(addTastingNote).toHaveBeenCalledWith(note, {
+            id: 314159,
+            firstName: 'Testy',
+            lastName: 'McTest',
+            email: 'test@test.com',
+          });
+          expect(client.post).not.toHaveBeenCalled();
+        });
+
+        it('resolves the saved note', async () => {
+          expect(await merge(note)).toEqual({ id: 73, syncStatus: 'INSERT' as 'INSERT', ...note });
+        });
+
+        it('adds the note to the notes list', async () => {
+          await merge(note);
+          expect(notes.value.length).toEqual(4);
+          expect(notes.value[3]).toEqual({ id: 73, syncStatus: 'INSERT' as 'INSERT', ...note });
+        });
       });
 
-      it('posts the new note', async () => {
-        await merge(note);
-        expect(client.post).toHaveBeenCalledTimes(1);
-        expect(client.post).toHaveBeenCalledWith('/user-tasting-notes', note);
-      });
+      describe('on the web', () => {
+        beforeEach(() => {
+          (client.post as any).mockResolvedValue({ data: { id: 73, ...note } });
+        });
 
-      it('resolves the saved note', async () => {
-        expect(await merge(note)).toEqual({ id: 73, ...note });
-      });
+        it('posts the new note', async () => {
+          const { addTastingNote } = useDatabase();
+          await merge(note);
+          expect(client.post).toHaveBeenCalledTimes(1);
+          expect(client.post).toHaveBeenCalledWith('/user-tasting-notes', note);
+          expect(addTastingNote).not.toHaveBeenCalled();
+        });
 
-      it('adds the note to the notes list', async () => {
-        await merge(note);
-        expect(notes.value.length).toEqual(4);
-        expect(notes.value[3]).toEqual({ id: 73, ...note });
+        it('resolves the saved note', async () => {
+          expect(await merge(note)).toEqual({ id: 73, ...note });
+        });
+
+        it('adds the note to the notes list', async () => {
+          await merge(note);
+          expect(notes.value.length).toEqual(4);
+          expect(notes.value[3]).toEqual({ id: 73, ...note });
+        });
       });
     });
 
@@ -237,24 +272,57 @@ describe('useTastingNotes', () => {
         teaCategoryId: 1,
       };
 
-      beforeEach(() => {
-        (client.post as any).mockResolvedValue({ data: note });
+      describe('on mobile', () => {
+        beforeEach(() => {
+          const { updateTastingNote } = useDatabase();
+          (updateTastingNote as any).mockResolvedValue({ syncStatus: 'UPDATE' as 'UPDATE', ...note });
+          (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        });
+
+        it('update the note in the database', async () => {
+          const { updateTastingNote } = useDatabase();
+          await merge(note);
+          expect(updateTastingNote).toHaveBeenCalledTimes(1);
+          expect(updateTastingNote).toHaveBeenCalledWith(note, {
+            id: 314159,
+            firstName: 'Testy',
+            lastName: 'McTest',
+            email: 'test@test.com',
+          });
+          expect(client.post).not.toHaveBeenCalled();
+        });
+
+        it('resolves the saved note', async () => {
+          expect(await merge(note)).toEqual({ syncStatus: 'UPDATE' as 'UPDATE', ...note });
+        });
+
+        it('update the note to the notes list', async () => {
+          await merge(note);
+          expect(notes.value.length).toEqual(3);
+          expect(notes.value[0]).toEqual({ syncStatus: 'UPDATE' as 'UPDATE', ...note });
+        });
       });
 
-      it('posts the existing note', async () => {
-        await merge(note);
-        expect(client.post).toHaveBeenCalledTimes(1);
-        expect(client.post).toHaveBeenCalledWith('/user-tasting-notes/1', note);
-      });
+      describe('on the web', () => {
+        beforeEach(() => {
+          (client.post as any).mockResolvedValue({ data: note });
+        });
 
-      it('resolves the saved note', async () => {
-        expect(await merge(note)).toEqual(note);
-      });
+        it('posts the existing note', async () => {
+          await merge(note);
+          expect(client.post).toHaveBeenCalledTimes(1);
+          expect(client.post).toHaveBeenCalledWith('/user-tasting-notes/1', note);
+        });
 
-      it('updates the note in the notes list', async () => {
-        await merge(note);
-        expect(notes.value.length).toEqual(3);
-        expect(notes.value[0]).toEqual(note);
+        it('resolves the saved note', async () => {
+          expect(await merge(note)).toEqual(note);
+        });
+
+        it('updates the note in the notes list', async () => {
+          await merge(note);
+          expect(notes.value.length).toEqual(3);
+          expect(notes.value[0]).toEqual(note);
+        });
       });
     });
   });
