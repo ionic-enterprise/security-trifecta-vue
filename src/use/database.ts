@@ -38,7 +38,7 @@ const createTables = (transaction: DbTransaction): void => {
   const name = { name: 'name', type: 'TEXT' };
   const description = { name: 'description', type: 'TEXT' };
   const syncStatus = { name: 'syncStatus', type: 'TEXT' };
-  transaction.executeSql(createTableSQL('TeaCategories', [id, name, description, syncStatus]));
+  transaction.executeSql(createTableSQL('TeaCategories', [id, name, description]));
   transaction.executeSql(
     createTableSQL('TastingNotes', [
       id,
@@ -68,7 +68,7 @@ const getTeaCategories = async (): Promise<Array<TeaCategory>> => {
   if ((await isReady()) && handle) {
     await handle.transaction((tx) =>
       tx.executeSql(
-        "SELECT id, name, description FROM TeaCategories WHERE coalesce(syncStatus, '') != 'DELETE' ORDER BY name",
+        'SELECT id, name, description FROM TeaCategories ORDER BY name',
         [],
         // tslint:disable-next-line:variable-name
         (_t: any, r: any) => {
@@ -82,13 +82,15 @@ const getTeaCategories = async (): Promise<Array<TeaCategory>> => {
   return cats;
 };
 
-const getTastingNotes = async (user: User): Promise<Array<TastingNote>> => {
+const getTastingNotes = async (user: User, all = false): Promise<Array<TastingNote>> => {
   const notes: Array<TastingNote> = [];
   if ((await isReady()) && handle) {
+    const predicate = all
+      ? 'userId = ? ORDER BY name'
+      : "coalesce(syncStatus, '') != 'DELETE' AND userId = ? ORDER BY name";
     await handle.transaction((tx) =>
       tx.executeSql(
-        'SELECT id, name, brand, notes, rating, teaCategoryId FROM TastingNotes' +
-          " WHERE coalesce(syncStatus, '') != 'DELETE' AND userId = ? ORDER BY name",
+        `SELECT id, name, brand, notes, rating, teaCategoryId, syncStatus FROM TastingNotes WHERE ${predicate}`,
         [user.id],
         // tslint:disable-next-line:variable-name
         (_t: any, r: any) => {
@@ -148,7 +150,7 @@ const resetTastingNotes = async (user: User): Promise<void> => {
   }
 };
 
-const deleteTastingNote = async (note: TastingNote, user: User): Promise<void> => {
+const markTastingNoteForDelete = async (note: TastingNote, user: User): Promise<void> => {
   if ((await isReady()) && handle) {
     await handle.transaction((tx) => {
       tx.executeSql(
@@ -240,7 +242,7 @@ const mergeTeaCategory = async (cat: TeaCategory): Promise<void> => {
       tx.executeSql(
         'INSERT INTO TeaCategories (id, name, description) VALUES (?, ?, ?)' +
           ' ON CONFLICT(id) DO' +
-          ' UPDATE SET name = ?, description = ? where syncStatus is NULL AND  id = ?',
+          ' UPDATE SET name = ?, description = ? where id = ?',
         [cat.id, cat.name, cat.description, cat.name, cat.description, cat.id],
         () => {
           null;
@@ -255,7 +257,7 @@ export default () => ({
   mergeTeaCategory,
 
   addTastingNote,
-  deleteTastingNote,
+  markTastingNoteForDelete,
   updateTastingNote,
   resetTastingNotes,
   trimTastingNotes,

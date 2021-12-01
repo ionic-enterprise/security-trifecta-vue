@@ -6,6 +6,9 @@
         <ion-buttons slot="primary">
           <ion-label>Dark</ion-label>
           <ion-toggle v-model="prefersDarkMode"></ion-toggle>
+          <ion-button data-testid="sync-button" @click="syncClicked">
+            <ion-icon slot="icon-only" :icon="sync"></ion-icon>
+          </ion-button>
           <ion-button data-testid="logout-button" @click="logoutClicked">
             <ion-icon slot="icon-only" :icon="logOutOutline"></ion-icon>
           </ion-button>
@@ -70,8 +73,9 @@ import { defineComponent } from 'vue';
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
 import useTastingNotes from '@/use/tasting-notes';
 import usePreferences from '@/use/preferences';
-import { logOutOutline } from 'ionicons/icons';
+import { logOutOutline, sync } from 'ionicons/icons';
 import useAuth from '@/use/auth';
+import useSync from '@/use/sync';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -100,6 +104,7 @@ export default defineComponent({
     const { notes, refresh, remove } = useTastingNotes();
     const { logout } = useAuth();
     const router = useRouter();
+    const syncDatabase = useSync();
 
     const logoutClicked = async (): Promise<void> => {
       await logout();
@@ -116,9 +121,14 @@ export default defineComponent({
       modal.present();
     };
 
+    const syncClicked = async () => {
+      await syncDatabase();
+      await refresh();
+    };
+
     refresh();
 
-    return { add, notes, logoutClicked, logOutOutline, prefersDarkMode, presentNoteEditor, remove };
+    return { add, notes, logoutClicked, logOutOutline, prefersDarkMode, presentNoteEditor, remove, sync, syncClicked };
   },
 });
 </script>

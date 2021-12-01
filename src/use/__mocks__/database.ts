@@ -1,6 +1,6 @@
 export default jest.fn().mockReturnValue({
   addTastingNote: jest.fn().mockResolvedValue(undefined),
-  deleteTastingNote: jest.fn().mockResolvedValue(undefined),
+  markTastingNoteForDelete: jest.fn().mockResolvedValue(undefined),
   updateTastingNote: jest.fn().mockResolvedValue(undefined),
   resetTastingNotes: jest.fn().mockResolvedValue(undefined),
   trimTastingNotes: jest.fn().mockResolvedValue(undefined),

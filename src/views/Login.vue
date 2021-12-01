@@ -83,8 +83,7 @@ import { useRouter } from 'vue-router';
 import { object as yupObject, string as yupString } from 'yup';
 import useAuth from '@/use/auth';
 import useSessionVault, { UnlockMode } from '@/use/session-vault';
-import useTastingNotes from '@/use/tasting-notes';
-import useTeaCategories from '@/use/tea-categories';
+import useSync from '@/use/sync';
 
 export default defineComponent({
   name: 'Login',
@@ -106,13 +105,12 @@ export default defineComponent({
   },
   setup() {
     const { canUnlock: canUnlockSession, setUnlockMode, getSession } = useSessionVault();
-    const { load: loadTastingNotes } = useTastingNotes();
-    const { load: loadTeaCategories } = useTeaCategories();
     const { login } = useAuth();
     const router = useRouter();
     const errorMessage = ref('');
     const displayUnlockOptions = isPlatform('hybrid');
     const canUnlock = ref(false);
+    const sync = useSync();
 
     const mainRoute = '/';
 
@@ -163,8 +161,7 @@ export default defineComponent({
         canUnlock.value = false;
       } else {
         if (await login(email.value as string, password.value as string)) {
-          await loadTastingNotes();
-          await loadTeaCategories();
+          await sync();
           setUnlockMode(unlockMode.value);
           router.replace(mainRoute);
         } else {

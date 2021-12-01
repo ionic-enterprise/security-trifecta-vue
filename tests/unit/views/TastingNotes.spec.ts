@@ -7,6 +7,7 @@ import { mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
 
 jest.mock('@/use/auth');
+jest.mock('@/use/sync');
 jest.mock('@/use/tasting-notes');
 jest.mock('@/use/vault-factory');
 

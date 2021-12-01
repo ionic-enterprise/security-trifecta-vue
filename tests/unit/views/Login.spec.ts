@@ -1,7 +1,6 @@
 import useAuth from '@/use/auth';
 import useSessionVault from '@/use/session-vault';
-import useTastingNotes from '@/use/tasting-notes';
-import useTeaCategories from '@/use/tea-categories';
+import useSync from '@/use/sync';
 import Login from '@/views/Login.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
 import { isPlatform } from '@ionic/vue';
@@ -16,8 +15,7 @@ jest.mock('@ionic/vue', () => {
 });
 jest.mock('@/use/auth');
 jest.mock('@/use/session-vault');
-jest.mock('@/use/tasting-notes');
-jest.mock('@/use/tea-categories');
+jest.mock('@/use/sync');
 
 describe('Login.vue', () => {
   let currentPlatform = 'hybrid';
@@ -207,20 +205,12 @@ describe('Login.vue', () => {
           expect(msg.text()).toBe('');
         });
 
-        it('loads the tasting notes into the database', async () => {
-          const { load } = useTastingNotes();
+        it('syncs with the database', async () => {
+          const sync = useSync();
           const button = wrapper.find('[data-testid="signin-button"]');
           await button.trigger('click');
           await flushPromises();
-          expect(load).toHaveBeenCalledTimes(1);
-        });
-
-        it('loads the tea categories into the database', async () => {
-          const { load } = useTeaCategories();
-          const button = wrapper.find('[data-testid="signin-button"]');
-          await button.trigger('click');
-          await flushPromises();
-          expect(load).toHaveBeenCalledTimes(1);
+          expect(sync).toHaveBeenCalledTimes(1);
         });
 
         it('sets the desired unlock mode', async () => {
@@ -256,11 +246,11 @@ describe('Login.vue', () => {
           expect(msg.text()).toBe('Invalid email and/or password');
         });
 
-        it('loads the tasting notes into the database', async () => {
-          const { load } = useTastingNotes();
+        it('does not sync the database', async () => {
+          const sync = useSync();
           const button = wrapper.find('[data-testid="signin-button"]');
           await button.trigger('click');
-          expect(load).not.toHaveBeenCalled();
+          expect(sync).not.toHaveBeenCalled();
         });
 
         it('does not navigate', async () => {

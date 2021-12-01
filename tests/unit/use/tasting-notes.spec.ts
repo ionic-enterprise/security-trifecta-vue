@@ -78,6 +78,22 @@ describe('useTastingNotes', () => {
         expect(client.get).toHaveBeenCalledWith('/user-tasting-notes');
       });
 
+      it('trims the notes in the database', async () => {
+        const { trimTastingNotes } = useDatabase();
+        const { load } = useTastingNotes();
+        await load();
+        expect(trimTastingNotes).toHaveBeenCalledTimes(1);
+        expect(trimTastingNotes).toHaveBeenCalledWith(
+          tastingNotes.map((x) => x.id as number),
+          {
+            id: 314159,
+            firstName: 'Testy',
+            lastName: 'McTest',
+            email: 'test@test.com',
+          }
+        );
+      });
+
       it('merges each of the tasting notes', async () => {
         const { mergeTastingNote } = useDatabase();
         const { load } = useTastingNotes();
@@ -327,21 +343,138 @@ describe('useTastingNotes', () => {
     });
   });
 
+  describe('force posting', () => {
+    const { merge, refresh } = useTastingNotes();
+    beforeEach(async () => await refresh());
+
+    describe('a new note', () => {
+      const note: TastingNote = {
+        brand: 'Lipton',
+        name: 'Yellow Label',
+        notes: 'Overly acidic, highly tannic flavor',
+        rating: 1,
+        teaCategoryId: 3,
+      };
+
+      describe('on mobile', () => {
+        beforeEach(() => {
+          (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        });
+
+        it('posts the new note', async () => {
+          await merge(note, true);
+          expect(client.post).toHaveBeenCalledTimes(1);
+          expect(client.post).toHaveBeenCalledWith('/user-tasting-notes', note);
+        });
+      });
+
+      describe('on the web', () => {
+        beforeEach(() => {
+          (client.post as any).mockResolvedValue({ data: { id: 73, ...note } });
+        });
+
+        it('posts the new note', async () => {
+          await merge(note, true);
+          expect(client.post).toHaveBeenCalledTimes(1);
+          expect(client.post).toHaveBeenCalledWith('/user-tasting-notes', note);
+        });
+      });
+    });
+
+    describe('an existing note', () => {
+      const note: TastingNote = {
+        id: 1,
+        brand: 'Lipton',
+        name: 'Green Tea',
+        notes: 'Kinda like Lite beer. Dull, but well executed.',
+        rating: 3,
+        teaCategoryId: 1,
+      };
+
+      describe('on mobile', () => {
+        beforeEach(() => {
+          (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        });
+
+        it('posts the existing note', async () => {
+          await merge(note, true);
+          expect(client.post).toHaveBeenCalledTimes(1);
+          expect(client.post).toHaveBeenCalledWith('/user-tasting-notes/1', note);
+        });
+      });
+
+      describe('on the web', () => {
+        beforeEach(() => {
+          (client.post as any).mockResolvedValue({ data: note });
+        });
+
+        it('posts the existing note', async () => {
+          await merge(note, true);
+          expect(client.post).toHaveBeenCalledTimes(1);
+          expect(client.post).toHaveBeenCalledWith('/user-tasting-notes/1', note);
+        });
+      });
+    });
+  });
+
   describe('remove', () => {
     const { notes, remove, refresh } = useTastingNotes();
     beforeEach(async () => await refresh());
 
-    it('deletes the existing note', async () => {
-      await remove(tastingNotes[1]);
-      expect(client.delete).toHaveBeenCalledTimes(1);
-      expect(client.delete).toHaveBeenCalledWith('/user-tasting-notes/3');
+    describe('on mobile', () => {
+      beforeEach(() => {
+        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+      });
+
+      it('marks the note for deletion', async () => {
+        const note = { ...tastingNotes[1] };
+        const { markTastingNoteForDelete } = useDatabase();
+        await remove(tastingNotes[1]);
+        expect(markTastingNoteForDelete).toHaveBeenCalledTimes(1);
+        expect(markTastingNoteForDelete).toHaveBeenCalledWith(note, {
+          id: 314159,
+          firstName: 'Testy',
+          lastName: 'McTest',
+          email: 'test@test.com',
+        });
+      });
+
+      it('removes the note from the notes', async () => {
+        await remove(tastingNotes[1]);
+        expect(notes.value.length).toEqual(2);
+        expect(notes.value[0].id).toEqual(1);
+        expect(notes.value[1].id).toEqual(42);
+      });
+
+      describe('when forcing the API call', () => {
+        it('deletes the existing note', async () => {
+          await remove(tastingNotes[1], true);
+          expect(client.delete).toHaveBeenCalledTimes(1);
+          expect(client.delete).toHaveBeenCalledWith('/user-tasting-notes/3');
+        });
+
+        it('removes the note from the notes', async () => {
+          await remove(tastingNotes[1], true);
+          expect(notes.value.length).toEqual(2);
+          expect(notes.value[0].id).toEqual(1);
+          expect(notes.value[1].id).toEqual(42);
+        });
+      });
     });
 
-    it('removes the note from the notes', async () => {
-      await remove(tastingNotes[1]);
-      expect(notes.value.length).toEqual(2);
-      expect(notes.value[0].id).toEqual(1);
-      expect(notes.value[1].id).toEqual(42);
+    describe('on the web', () => {
+      it('deletes the existing note', async () => {
+        await remove(tastingNotes[1]);
+        expect(client.delete).toHaveBeenCalledTimes(1);
+        expect(client.delete).toHaveBeenCalledWith('/user-tasting-notes/3');
+      });
+
+      it('removes the note from the notes', async () => {
+        await remove(tastingNotes[1]);
+        expect(notes.value.length).toEqual(2);
+        expect(notes.value[0].id).toEqual(1);
+        expect(notes.value[1].id).toEqual(42);
+      });
     });
   });
 });

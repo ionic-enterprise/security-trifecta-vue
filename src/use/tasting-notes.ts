@@ -13,12 +13,18 @@ const notes = ref<Array<TastingNote>>([]);
 
 const load = async (): Promise<void> => {
   if (isPlatform('hybrid')) {
-    const { mergeTastingNote } = useDatabase();
+    const { mergeTastingNote, trimTastingNotes } = useDatabase();
     const { getSession } = useSessionVault();
 
     const session = await getSession();
     const notes = (await client.get(endpoint).then((res: { data?: any }) => res.data)) as Array<TastingNote>;
-    notes.forEach((n) => mergeTastingNote(n, session.user));
+    await trimTastingNotes(
+      notes.map((x) => x.id as number),
+      session.user
+    );
+    const merges: Array<Promise<any>> = [];
+    notes.forEach((n) => merges.push(mergeTastingNote(n, session.user)));
+    await Promise.all(merges);
   }
 };
 
@@ -46,16 +52,20 @@ const post = async (note: TastingNote): Promise<TastingNote> => {
   return data;
 };
 
-const merge = async (note: TastingNote): Promise<TastingNote | undefined> => {
+const mergeInDatabase = async (note: TastingNote): Promise<TastingNote> => {
+  const { addTastingNote, updateTastingNote } = useDatabase();
+  const { getSession } = useSessionVault();
+  const session = await getSession();
+  return note.id
+    ? (await updateTastingNote(note, session.user)) || note
+    : (await addTastingNote(note, session.user)) || note;
+};
+
+const merge = async (note: TastingNote, forceApiCall = false): Promise<TastingNote | undefined> => {
   let data: TastingNote;
 
-  if (isPlatform('hybrid')) {
-    const { addTastingNote, updateTastingNote } = useDatabase();
-    const { getSession } = useSessionVault();
-    const session = await getSession();
-    data = note.id
-      ? (await updateTastingNote(note, session.user)) || note
-      : (await addTastingNote(note, session.user)) || note;
+  if (isPlatform('hybrid') && !forceApiCall) {
+    data = await mergeInDatabase(note);
   } else {
     data = await post(note);
   }
@@ -69,8 +79,15 @@ const merge = async (note: TastingNote): Promise<TastingNote | undefined> => {
   return data;
 };
 
-const remove = async (note: TastingNote): Promise<void> => {
-  await client.delete(`${endpoint}/${note.id}`);
+const remove = async (note: TastingNote, forceApiCall = false): Promise<void> => {
+  if (isPlatform('hybrid') && !forceApiCall) {
+    const { markTastingNoteForDelete } = useDatabase();
+    const { getSession } = useSessionVault();
+    const session = await getSession();
+    markTastingNoteForDelete(note, session.user);
+  } else {
+    await client.delete(`${endpoint}/${note.id}`);
+  }
   const idx = notes.value.findIndex((n) => n.id === note.id);
   notes.value.splice(idx, 1);
 };
