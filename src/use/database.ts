@@ -17,7 +17,7 @@ const openDatabase = async (): Promise<SQLiteObject | null> => {
       return SQLite.create({
         name: 'teaisforme.db',
         location: 'default',
-        // key,
+        key,
       });
     }
   }
