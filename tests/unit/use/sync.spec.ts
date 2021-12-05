@@ -1,22 +1,22 @@
-import { TastingNote, User } from '@/models';
-import useDatabase from '@/use/database';
-import useSessionVault from '@/use/session-vault';
+import { TastingNote } from '@/models';
 import useSync from '@/use/sync';
 import useTeaCategories from '@/use/tea-categories';
 import useTastingNotes from '@/use/tasting-notes';
+import useTastingNotesAPI from '@/use/tasting-notes-api';
+import useTastingNotesDatabase from '@/use/tasting-notes-database';
 
 jest.mock('@ionic/vue', () => {
   const actual = jest.requireActual('@ionic/vue');
   return { ...actual, isPlatform: jest.fn() };
 });
 jest.mock('@/use/database');
-jest.mock('@/use/session-vault');
 jest.mock('@/use/tasting-notes');
+jest.mock('@/use/tasting-notes-api');
+jest.mock('@/use/tasting-notes-database');
 jest.mock('@/use/tea-categories');
 
 describe('useSync', () => {
   let tastingNotes: Array<TastingNote>;
-  let user: User;
 
   const initializeTestData = () => {
     tastingNotes = [
@@ -102,80 +102,59 @@ describe('useSync', () => {
         syncStatus: null,
       },
     ];
-
-    user = {
-      id: 314159,
-      firstName: 'Testy',
-      lastName: 'McTest',
-      email: 'test@test.com',
-    };
   };
 
   beforeEach(() => {
-    const { getSession } = useSessionVault();
-    const { getTastingNotes } = useDatabase();
+    const { getAll } = useTastingNotesDatabase();
     initializeTestData();
     jest.clearAllMocks();
-    (getTastingNotes as any).mockResolvedValue(tastingNotes);
-    (getSession as any).mockResolvedValue({
-      user,
-      token: '123456789',
-    });
+    (getAll as any).mockResolvedValue(tastingNotes);
   });
 
-  it('gets the notes for the current user', async () => {
-    const { getTastingNotes } = useDatabase();
+  it('gets the notes for the current user from the database, including deleted notes', async () => {
+    const { getAll } = useTastingNotesDatabase();
     const sync = useSync();
     await sync();
-    expect(getTastingNotes).toHaveBeenCalledTimes(1);
-    expect(getTastingNotes).toHaveBeenCalledWith(
-      {
-        id: 314159,
-        firstName: 'Testy',
-        lastName: 'McTest',
-        email: 'test@test.com',
-      },
-      true
-    );
+    expect(getAll).toHaveBeenCalledTimes(1);
+    expect(getAll).toHaveBeenCalledWith(true);
   });
 
-  it('merges to the API the INSERT and UPDATE items', async () => {
-    const { merge } = useTastingNotes();
+  it('saves the INSERT and UPDATE items to the API', async () => {
+    const { save } = useTastingNotesAPI();
     const sync = useSync();
     await sync();
-    expect(merge).toHaveBeenCalledTimes(5);
+    expect(save).toHaveBeenCalledTimes(5);
   });
 
   it('removes the ID for the INSERT items', async () => {
-    const { merge } = useTastingNotes();
+    const { save } = useTastingNotesAPI();
     const sync = useSync();
     await sync();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...note } = tastingNotes[0];
-    expect(merge).toHaveBeenCalledWith(note, true);
+    expect(save).toHaveBeenCalledWith(note);
   });
 
   it('does not remove the ID for the UPDATE items', async () => {
-    const { merge } = useTastingNotes();
+    const { save } = useTastingNotesAPI();
     const sync = useSync();
     await sync();
-    expect(merge).toHaveBeenCalledWith(tastingNotes[1], true);
+    expect(save).toHaveBeenCalledWith(tastingNotes[1]);
   });
 
   it('calls the backend API to remove the DELETE items', async () => {
-    const { remove } = useTastingNotes();
+    const { remove } = useTastingNotesAPI();
     const sync = useSync();
     await sync();
     expect(remove).toHaveBeenCalledTimes(1);
-    expect(remove).toHaveBeenCalledWith(tastingNotes[3], true);
+    expect(remove).toHaveBeenCalledWith(tastingNotes[3]);
   });
 
   it('resets the cached tasting notes data', async () => {
-    const { resetTastingNotes } = useDatabase();
+    const { reset } = useTastingNotesDatabase();
     const sync = useSync();
     await sync();
-    expect(resetTastingNotes).toHaveBeenCalledTimes(1);
-    expect(resetTastingNotes).toHaveBeenCalledWith(user);
+    expect(reset).toHaveBeenCalledTimes(1);
   });
 
   it('loads the tea categories', async () => {

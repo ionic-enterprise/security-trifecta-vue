@@ -92,7 +92,7 @@ describe('AppTastingNoteEditor.vue', () => {
 
     await notes.setValue('');
     await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe(''));
+    await waitForExpect(() => expect(msg.text()).toBe('Notes is a required field'));
 
     await notes.setValue('Not very good');
     await flushPromises();
@@ -189,13 +189,13 @@ describe('AppTastingNoteEditor.vue', () => {
         await notes.setValue('Meh. It is ok.');
       });
 
-      it('merges the tasting note', async () => {
-        const { merge } = useTastingNotes();
+      it('saves the tasting note', async () => {
+        const { save } = useTastingNotes();
         const button = wrapper.find('[data-testid="submit-button"]');
         await button.trigger('click');
 
-        expect(merge).toHaveBeenCalledTimes(1);
-        expect(merge).toHaveBeenCalledWith({
+        expect(save).toHaveBeenCalledTimes(1);
+        expect(save).toHaveBeenCalledWith({
           brand: 'foobar',
           name: 'mytea',
           rating: 2,
@@ -205,12 +205,12 @@ describe('AppTastingNoteEditor.vue', () => {
       });
 
       it('includes the ID if it set', async () => {
-        const { merge } = useTastingNotes();
+        const { save } = useTastingNotes();
         const button = wrapper.find('[data-testid="submit-button"]');
         await wrapper.setProps({ noteId: 4273 });
         await button.trigger('click');
 
-        expect(merge).toHaveBeenCalledWith({
+        expect(save).toHaveBeenCalledWith({
           id: 4273,
           brand: 'foobar',
           name: 'mytea',
@@ -230,11 +230,11 @@ describe('AppTastingNoteEditor.vue', () => {
   });
 
   describe('cancel button', () => {
-    it('does not merge', async () => {
-      const { merge } = useTastingNotes();
+    it('does not save', async () => {
+      const { save } = useTastingNotes();
       const button = wrapper.find('[data-testid="cancel-button"]');
       await button.trigger('click');
-      expect(merge).not.toHaveBeenCalled();
+      expect(save).not.toHaveBeenCalled();
     });
 
     it('closes the modal', async () => {

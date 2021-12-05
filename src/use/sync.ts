@@ -1,34 +1,34 @@
-import useDatabase from '@/use/database';
-import useSessionVault from '@/use/session-vault';
+import { TastingNote } from '@/models';
 import useTastingNotes from '@/use/tasting-notes';
+import useTastingNotesAPI from '@/use/tasting-notes-api';
+import useTastingNotesDatabase from '@/use/tasting-notes-database';
 import useTeaCategories from '@/use/tea-categories';
 
 const sync = async (): Promise<void> => {
-  const { getTastingNotes, resetTastingNotes } = useDatabase();
-  const { getSession } = useSessionVault();
-  const { load: loadTastingNotes, merge, remove } = useTastingNotes();
+  const { getAll, reset } = useTastingNotesDatabase();
+  const { remove, save } = useTastingNotesAPI();
+  const { load: loadTastingNotes } = useTastingNotes();
   const { load: loadTeaCategories } = useTeaCategories();
 
-  const session = await getSession();
-  const notes = await getTastingNotes(session.user, true);
+  const notes = await getAll(true);
 
-  const merges: Array<Promise<any>> = [];
-  notes.forEach((note) => {
+  const calls: Array<Promise<any>> = [];
+  notes.forEach((note: TastingNote) => {
     if (note.syncStatus === 'UPDATE') {
-      merges.push(merge(note, true));
+      calls.push(save(note));
     }
     if (note.syncStatus === 'INSERT') {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...n } = note;
-      merges.push(merge(n, true));
+      calls.push(save(n));
     }
     if (note.syncStatus === 'DELETE') {
-      merges.push(remove(note, true));
+      calls.push(remove(note));
     }
   });
-  await Promise.all(merges);
+  await Promise.all(calls);
 
-  await resetTastingNotes(session.user);
+  await reset();
 
   await loadTeaCategories();
   await loadTastingNotes();

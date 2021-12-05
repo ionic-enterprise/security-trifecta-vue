@@ -1,29 +1,24 @@
 import { ref } from 'vue';
 import { TeaCategory } from '@/models';
-import useBackendAPI from './backend-api';
-import useDatabase from './database';
+import useTeaCategoriesAPI from './tea-categories-api';
+import useTeaCategoriesDatabase from './tea-categories-database';
 import { isPlatform } from '@ionic/vue';
 
-const { client } = useBackendAPI();
 const categories = ref<Array<TeaCategory>>([]);
-const endpoint = '/tea-categories';
 
 const load = async (): Promise<void> => {
   if (isPlatform('hybrid')) {
-    const { mergeTeaCategory } = useDatabase();
-    const cats = (await client.get(endpoint).then((res: { data?: any }) => res.data)) as Array<TeaCategory>;
-    cats.forEach((cat) => mergeTeaCategory(cat));
+    const { getAll } = useTeaCategoriesAPI();
+    const { trim, upsert } = useTeaCategoriesDatabase();
+    const cats = await getAll();
+    trim(cats.map((cat: TeaCategory) => cat.id));
+    cats.forEach((cat: TeaCategory) => upsert(cat));
   }
 };
 
 const refresh = async (): Promise<void> => {
-  if (isPlatform('hybrid')) {
-    const { getTeaCategories } = useDatabase();
-    categories.value = await getTeaCategories();
-  } else {
-    const res = await client.get(endpoint);
-    categories.value = res.data;
-  }
+  const { getAll } = isPlatform('hybrid') ? useTeaCategoriesDatabase() : useTeaCategoriesAPI();
+  categories.value = await getAll();
 };
 
 const find = async (id: number): Promise<TeaCategory | undefined> => {

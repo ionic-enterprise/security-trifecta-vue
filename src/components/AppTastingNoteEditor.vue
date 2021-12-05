@@ -150,7 +150,7 @@ export default defineComponent({
     };
 
     const submit = async () => {
-      const { merge } = useTastingNotes();
+      const { save } = useTastingNotes();
       const note: TastingNote = {
         brand: brand.value as string,
         name: name.value as string,
@@ -161,7 +161,7 @@ export default defineComponent({
       if (props.noteId) {
         note.id = props.noteId;
       }
-      await merge(note);
+      await save(note);
       await modalController.dismiss();
     };
 
