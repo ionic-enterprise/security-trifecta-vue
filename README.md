@@ -6,7 +6,7 @@ The scenario modeled here is where the application has a need for:
 - Securely storing user options using an offline-first strategy.
 - Securely protecting the authentication assets of the application.
 
-For this application, "authentication assets" consist of the session information as well as a key that is used to encrypt the database. For our architecture, the database is shared, and thus the same database encryption key is used across oll users. The architecture could easily be expanded so that each user had their own database and their own key.
+For this application, "authentication assets" consist of the session information as well as a key that is used to encrypt the database. For our architecture, the database is shared, and thus the same database encryption key is used across all users. The architecture could easily be expanded so that each user had their own database and their own key.
 
 ## Getting Started
 
@@ -20,6 +20,13 @@ Follow all the normal steps:
 1. `npx cap open ios` and/or `npx cap open android`
 
 This application takes advantage of a couple of `@ionic-enterprise` solutions. Thus you need to have purchased access to those solutions and have a valid enterprise key in order to try this application.
+
+## Credentials
+
+This application uses a live backend API that requires a login. Unless you have your own credentials, please use the following:
+
+- **email:** `test@ionic.io`
+- **password:** `Ion54321`
 
 ## Identity Vault Usage
 
