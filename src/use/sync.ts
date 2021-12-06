@@ -4,11 +4,10 @@ import useTastingNotesAPI from '@/use/tasting-notes-api';
 import useTastingNotesDatabase from '@/use/tasting-notes-database';
 import useTeaCategories from '@/use/tea-categories';
 
-const sync = async (): Promise<void> => {
+const syncTastingNotes = async (): Promise<void> => {
   const { getAll, reset } = useTastingNotesDatabase();
   const { remove, save } = useTastingNotesAPI();
   const { load: loadTastingNotes } = useTastingNotes();
-  const { load: loadTeaCategories } = useTeaCategories();
 
   const notes = await getAll(true);
 
@@ -27,11 +26,18 @@ const sync = async (): Promise<void> => {
     }
   });
   await Promise.all(calls);
-
   await reset();
-
-  await loadTeaCategories();
   await loadTastingNotes();
+};
+
+const syncTeaCategories = async (): Promise<void> => {
+  const { load: loadTeaCategories } = useTeaCategories();
+  await loadTeaCategories();
+};
+
+const sync = async (): Promise<void> => {
+  await syncTastingNotes();
+  await syncTeaCategories();
 };
 
 export default () => sync;
