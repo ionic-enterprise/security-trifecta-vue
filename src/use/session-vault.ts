@@ -12,7 +12,7 @@ let session: Session | null | undefined;
 
 const { createVault } = useVaultFactory();
 const vault = createVault({
-  key: 'com.kensodemann.teataster',
+  key: 'io.ionic.csdemosecurestorage',
   type: VaultType.SecureStorage,
   deviceSecurityType: DeviceSecurityType.None,
   lockAfterBackgrounded: 5000,

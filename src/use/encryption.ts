@@ -4,7 +4,7 @@ import useBackendAPI from '@/use/backend-api';
 
 const { createVault } = useVaultFactory();
 const vault = createVault({
-  key: 'com.kensodemann.teatasterkeys',
+  key: 'io.ionic.csdemosecurestoragekeys',
   type: VaultType.SecureStorage,
   deviceSecurityType: DeviceSecurityType.None,
   unlockVaultOnLoad: false,
