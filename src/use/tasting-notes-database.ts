@@ -12,7 +12,7 @@ const getAll = async (includeDeleted = false): Promise<Array<TastingNote>> => {
     const { user } = await getSession();
     const predicate = includeDeleted
       ? 'userId = ? ORDER BY name'
-      : "coalesce(syncStatus, '') != 'DELETE' AND userId = ? ORDER BY name";
+      : "coalesce(syncStatus, '') != 'DELETE' AND userId = ? ORDER BY brand, name";
     await handle.transaction((tx) =>
       tx.executeSql(
         `SELECT id, name, brand, notes, rating, teaCategoryId, syncStatus FROM TastingNotes WHERE ${predicate}`,

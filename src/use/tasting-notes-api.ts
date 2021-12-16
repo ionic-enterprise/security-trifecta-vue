@@ -1,13 +1,15 @@
-import useBackendAPI from '@/use/backend-api';
 import { TastingNote } from '@/models';
+import useBackendAPI from '@/use/backend-api';
+import useCompare from '@/use/compare';
 
 const { client } = useBackendAPI();
 
 const endpoint = '/user-tasting-notes';
 
 const getAll = async (): Promise<Array<TastingNote>> => {
+  const { byBrandAndName } = useCompare();
   const { data } = await client.get(endpoint);
-  return data;
+  return data.sort(byBrandAndName);
 };
 
 const save = async (note: TastingNote): Promise<TastingNote> => {
