@@ -96,18 +96,17 @@ const add = async (note: TastingNote): Promise<TastingNote | undefined> => {
   const handle = await getHandle();
   if (handle) {
     const { user } = await getSession();
-    const n = { ...note, syncStatus: 'INSERT' as 'INSERT' };
     await handle.transaction((tx) => {
       tx.executeSql(
         'SELECT COALESCE(MAX(id), 0) + 1 AS newId FROM TastingNotes',
         [],
         // tslint:disable-next-line:variable-name
         (_t: any, r: any) => {
-          n.id = r.rows.item(0).newId;
+          note.id = r.rows.item(0).newId;
           tx.executeSql(
             'INSERT INTO TastingNotes (id, name, brand, notes, rating, teaCategoryId, userId, syncStatus)' +
-              ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [n.id, n.name, n.brand, n.notes, n.rating, n.teaCategoryId, user.id, n.syncStatus],
+              " VALUES (?, ?, ?, ?, ?, ?, ?, 'INSERT')",
+            [note.id, note.name, note.brand, note.notes, note.rating, note.teaCategoryId, user.id],
             () => {
               null;
             }
@@ -115,7 +114,7 @@ const add = async (note: TastingNote): Promise<TastingNote | undefined> => {
         }
       );
     });
-    return n;
+    return note;
   }
 };
 
@@ -123,19 +122,18 @@ const update = async (note: TastingNote): Promise<TastingNote | undefined> => {
   const handle = await getHandle();
   if (handle) {
     const { user } = await getSession();
-    const n = { ...note, syncStatus: !note.syncStatus ? 'UPDATE' : note.syncStatus };
-    console.log('updating', n);
     await handle.transaction((tx) => {
       tx.executeSql(
-        'UPDATE TastingNotes SET name = ?, brand = ?, notes = ?, rating = ?, teaCategoryId = ?, syncStatus = ?' +
+        'UPDATE TastingNotes SET name = ?, brand = ?, notes = ?, rating = ?, teaCategoryId = ?,' +
+          " syncStatus = CASE syncStatus WHEN 'INSERT' THEN 'INSERT' else 'UPDATE' end" +
           ' WHERE userId = ? AND id = ?',
-        [n.name, n.brand, n.notes, n.rating, n.teaCategoryId, n.syncStatus, user.id, n.id],
+        [note.name, note.brand, note.notes, note.rating, note.teaCategoryId, user.id, note.id],
         () => {
           null;
         }
       );
     });
-    return n;
+    return note;
   }
 };
 
