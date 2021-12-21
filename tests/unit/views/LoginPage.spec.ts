@@ -1,7 +1,7 @@
 import useAuth from '@/use/auth';
 import useSessionVault from '@/use/session-vault';
 import useSync from '@/use/sync';
-import Login from '@/views/Login.vue';
+import LoginPage from '@/views/LoginPage.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
 import { isPlatform } from '@ionic/vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
@@ -17,18 +17,18 @@ jest.mock('@/use/auth');
 jest.mock('@/use/session-vault');
 jest.mock('@/use/sync');
 
-describe('Login.vue', () => {
+describe('LoginPage.vue', () => {
   let currentPlatform = 'hybrid';
   let router: Router;
 
-  const mountView = async (): Promise<VueWrapper<typeof Login>> => {
+  const mountView = async (): Promise<VueWrapper<typeof LoginPage>> => {
     router = createRouter({
       history: createWebHistory(process.env.BASE_URL),
-      routes: [{ path: '/', component: Login }],
+      routes: [{ path: '/', component: LoginPage }],
     });
     router.push('/');
     await router.isReady();
-    return mount(Login, {
+    return mount(LoginPage, {
       global: {
         plugins: [router],
       },
@@ -173,7 +173,7 @@ describe('Login.vue', () => {
     });
 
     describe('clicking on the signin button', () => {
-      let wrapper: VueWrapper<typeof Login>;
+      let wrapper: VueWrapper<typeof LoginPage>;
       beforeEach(async () => {
         Device.isBiometricsEnabled = jest.fn().mockResolvedValue(false);
         wrapper = await mountView();

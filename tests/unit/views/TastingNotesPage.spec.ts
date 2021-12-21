@@ -1,6 +1,6 @@
 import useAuth from '@/use/auth';
 import useTastingNotes from '@/use/tasting-notes';
-import TastingNotes from '@/views/TastingNotes.vue';
+import TastingNotesPage from '@/views/TastingNotesPage.vue';
 import { modalController } from '@ionic/vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { mount, VueWrapper } from '@vue/test-utils';
@@ -11,17 +11,17 @@ jest.mock('@/use/sync');
 jest.mock('@/use/tasting-notes');
 jest.mock('@/use/vault-factory');
 
-describe('TastingNotes.vue', () => {
+describe('TastingNotesPage.vue', () => {
   let router: Router;
 
-  const mountView = async (): Promise<VueWrapper<typeof TastingNotes>> => {
+  const mountView = async (): Promise<VueWrapper<typeof TastingNotesPage>> => {
     router = createRouter({
       history: createWebHistory(process.env.BASE_URL),
-      routes: [{ path: '/', component: TastingNotes }],
+      routes: [{ path: '/', component: TastingNotesPage }],
     });
     router.push('/');
     await router.isReady();
-    return mount(TastingNotes, {
+    return mount(TastingNotesPage, {
       global: {
         plugins: [router],
       },

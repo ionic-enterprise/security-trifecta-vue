@@ -79,7 +79,7 @@ import useSync from '@/use/sync';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'TastingNotes',
+  name: 'TastingNotesPage',
   components: {
     IonButton,
     IonButtons,

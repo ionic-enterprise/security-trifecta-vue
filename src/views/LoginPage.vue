@@ -86,7 +86,7 @@ import useSessionVault, { UnlockMode } from '@/use/session-vault';
 import useSync from '@/use/sync';
 
 export default defineComponent({
-  name: 'Login',
+  name: 'LoginPage',
   components: {
     IonButton,
     IonContent,

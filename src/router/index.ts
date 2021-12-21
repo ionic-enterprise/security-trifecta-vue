@@ -1,26 +1,23 @@
 import useSessionVault from '@/use/session-vault';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from 'vue-router';
-import Start from '../views/Start.vue';
+import StartPage from '../views/StartPage.vue';
 
 const { getSession } = useSessionVault();
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Start',
-    component: Start,
+    component: StartPage,
   },
   {
     path: '/home',
-    name: 'Home',
-    component: () => import('@/views/TastingNotes.vue'),
+    component: () => import('@/views/TastingNotesPage.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/login',
-    name: 'Login',
-    component: () => import('@/views/Login.vue'),
+    component: () => import('@/views/LoginPage.vue'),
   },
 ];
 

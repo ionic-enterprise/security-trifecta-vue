@@ -1,26 +1,26 @@
 import { mount, VueWrapper } from '@vue/test-utils';
-import Start from '@/views/Start.vue';
+import StartPage from '@/views/StartPage.vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { Router } from 'vue-router';
 import useSessionVault from '@/use/session-vault';
 
 jest.mock('@/use/session-vault');
-describe('Start.vue', () => {
+describe('StartPage.vue', () => {
   let router: Router;
 
-  const mountView = async (): Promise<VueWrapper<typeof Start>> => {
+  const mountView = async (): Promise<VueWrapper<typeof StartPage>> => {
     router = createRouter({
       history: createWebHistory(process.env.BASE_URL),
       routes: [
-        { path: '/', component: Start },
-        { path: '/home', component: Start },
-        { path: '/login', component: Start },
+        { path: '/', component: StartPage },
+        { path: '/home', component: StartPage },
+        { path: '/login', component: StartPage },
       ],
     });
     router.push('/');
     await router.isReady();
     router.replace = jest.fn();
-    return mount(Start, {
+    return mount(StartPage, {
       global: {
         plugins: [router],
       },

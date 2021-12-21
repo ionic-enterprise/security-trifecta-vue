@@ -10,7 +10,7 @@ import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import useSessionVault from '@/use/session-vault';
 export default defineComponent({
-  name: 'Start',
+  name: 'StartPage',
   components: {
     IonContent,
     IonPage,
