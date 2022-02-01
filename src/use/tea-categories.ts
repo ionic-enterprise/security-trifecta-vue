@@ -11,8 +11,10 @@ const load = async (): Promise<void> => {
     const { getAll } = useTeaCategoriesAPI();
     const { trim, upsert } = useTeaCategoriesDatabase();
     const cats = await getAll();
-    trim(cats.map((cat: TeaCategory) => cat.id));
-    cats.forEach((cat: TeaCategory) => upsert(cat));
+    await trim(cats.map((cat: TeaCategory) => cat.id));
+    const upserts: Array<Promise<any>> = [];
+    cats.forEach((cat: TeaCategory) => upserts.push(upsert(cat)));
+    await Promise.all(upserts);
   }
 };
 
