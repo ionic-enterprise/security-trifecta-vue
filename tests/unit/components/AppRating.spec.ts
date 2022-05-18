@@ -3,7 +3,7 @@ import AppRating from '@/components/AppRating.vue';
 import { star, starOutline } from 'ionicons/icons';
 
 describe('AppRating.vue', () => {
-  let wrapper: VueWrapper<typeof AppRating>;
+  let wrapper: VueWrapper<any>;
 
   beforeEach(async () => {
     wrapper = mount(AppRating);

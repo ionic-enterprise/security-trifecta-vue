@@ -8,7 +8,7 @@ jest.mock('@/use/session-vault');
 describe('StartPage.vue', () => {
   let router: Router;
 
-  const mountView = async (): Promise<VueWrapper<typeof StartPage>> => {
+  const mountView = async (): Promise<VueWrapper<any>> => {
     router = createRouter({
       history: createWebHistory(process.env.BASE_URL),
       routes: [

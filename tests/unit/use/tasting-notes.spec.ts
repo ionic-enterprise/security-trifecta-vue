@@ -202,7 +202,7 @@ describe('useTastingNotes', () => {
         const { save: saveToDatabase } = useTastingNotesDatabase();
 
         beforeEach(() => {
-          (saveToDatabase as any).mockResolvedValue({ id: 73, syncStatus: 'INSERT' as 'INSERT', ...note });
+          (saveToDatabase as any).mockResolvedValue({ id: 73, syncStatus: 'INSERT' as const, ...note });
           (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
         });
 
@@ -213,13 +213,13 @@ describe('useTastingNotes', () => {
         });
 
         it('resolves the saved note', async () => {
-          expect(await save(note)).toEqual({ id: 73, syncStatus: 'INSERT' as 'INSERT', ...note });
+          expect(await save(note)).toEqual({ id: 73, syncStatus: 'INSERT' as const, ...note });
         });
 
         it('adds the note to the notes list', async () => {
           await save(note);
           expect(notes.value.length).toEqual(4);
-          expect(notes.value[3]).toEqual({ id: 73, syncStatus: 'INSERT' as 'INSERT', ...note });
+          expect(notes.value[3]).toEqual({ id: 73, syncStatus: 'INSERT' as const, ...note });
         });
       });
 
@@ -261,7 +261,7 @@ describe('useTastingNotes', () => {
         const { save: saveToDatabase } = useTastingNotesDatabase();
 
         beforeEach(() => {
-          (saveToDatabase as any).mockResolvedValue({ syncStatus: 'UPDATE' as 'UPDATE', ...note });
+          (saveToDatabase as any).mockResolvedValue({ syncStatus: 'UPDATE' as const, ...note });
           (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
         });
 
@@ -272,13 +272,13 @@ describe('useTastingNotes', () => {
         });
 
         it('resolves the saved note', async () => {
-          expect(await save(note)).toEqual({ syncStatus: 'UPDATE' as 'UPDATE', ...note });
+          expect(await save(note)).toEqual({ syncStatus: 'UPDATE' as const, ...note });
         });
 
         it('update the note to the notes list', async () => {
           await save(note);
           expect(notes.value.length).toEqual(3);
-          expect(notes.value[0]).toEqual({ syncStatus: 'UPDATE' as 'UPDATE', ...note });
+          expect(notes.value[0]).toEqual({ syncStatus: 'UPDATE' as const, ...note });
         });
       });
 

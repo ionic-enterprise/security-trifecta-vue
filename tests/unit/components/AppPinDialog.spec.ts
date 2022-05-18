@@ -2,7 +2,7 @@ import { mount, VueWrapper } from '@vue/test-utils';
 import AppPinDialog from '@/components/AppPinDialog.vue';
 
 describe('AppPinDialog.vue', () => {
-  let wrapper: VueWrapper<typeof AppPinDialog>;
+  let wrapper: VueWrapper<any>;
 
   beforeEach(async () => {
     wrapper = mount(AppPinDialog);
