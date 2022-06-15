@@ -1,19 +1,32 @@
+import useEncryption from '@/use/encryption';
 import useStorage from '@/use/storage';
-import { Storage } from '@ionic/storage';
+import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 
 jest.mock('@ionic/vue', () => {
   const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn() };
+  return { ...actual, isPlatform: jest.fn().mockReturnValue(true) };
 });
+jest.mock('@/use/encryption');
 jest.mock('@/use/vault-factory');
-jest.mock('@ionic/storage');
+jest.mock('@ionic-enterprise/secure-storage', () => {
+  const actual = jest.requireActual('@ionic-enterprise/secure-storage');
+  const mockKeyValueStorage = {
+    create: jest.fn().mockResolvedValue(undefined),
+    set: jest.fn().mockResolvedValue(undefined),
+    get: jest.fn().mockResolvedValue('foo'),
+  };
+  return {
+    ...actual,
+    KeyValueStorage: jest.fn(() => mockKeyValueStorage),
+  };
+});
 
 describe('useStorage', () => {
-  let store: Storage;
+  let store: KeyValueStorage;
   beforeAll(() => {
     useStorage();
-    store = (Storage as any).mock.instances[0];
+    store = new KeyValueStorage();
   });
 
   beforeEach(() => {
@@ -23,9 +36,13 @@ describe('useStorage', () => {
 
   it('creates the storage on the first call', async () => {
     const { setValue } = useStorage();
+    const { getDatabaseKey } = useEncryption();
+    (getDatabaseKey as jest.Mock).mockResolvedValue('foo-bar-key');
+    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
     expect(store.create).not.toHaveBeenCalled();
     await setValue('some-key', false);
     expect(store.create).toHaveBeenCalledTimes(1);
+    expect(store.create).toHaveBeenCalledWith('foo-bar-key');
     await setValue('some-key', true);
     expect(store.create).toHaveBeenCalledTimes(1);
   });

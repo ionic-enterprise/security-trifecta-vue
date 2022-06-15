@@ -34,7 +34,7 @@ This application uses the Identity Vault product to securely store the user's se
 
 ### The Session Vault
 
-The session vault is built in `src/use/session-vault.ts` and follows the same common patterns established as a best-practice implmentation in our other Identity Vault demos. Please see the Identity Vault documentation for more information.
+The session vault is built in `src/use/session-vault.ts` and follows the same common patterns established as a best-practice implementation in our other Identity Vault demos. Please see the Identity Vault documentation for more information.
 
 ### The Encryption Key Vault
 
@@ -46,39 +46,24 @@ The first time that a user performs an operation requiring the key (generally th
 
 ## Secure Storage Databases
 
-The Secure Storage product allows for two mode of operation: key-value pair storge, and relational data storage. This application demonstrates each of these operating modes.
+The Secure Storage product allows for two mode of operation: key-value pair storage, and relational data storage. This application demonstrates each of these operating modes.
 
 ### Key-Value Pair Storage
 
-For the key-value pair storage mode of Secure Storage, pair the secure storage product with <a href="https://github.com/ionic-team/ionic-storage" target="_blank">`@ionic/storage`</a>. Doing so allows you to securely store simple key-value pair data on your device. This is best suited for storing sensitive non-relational data.
+For the key-value pair storage mode of Secure Storage, use the <a href="https://ionic.io/docs/secure-storage/key-value" target="_blank">`Key-Value API`</a>. Doing so allows you to securely store simple key-value pair data on your device. This is best suited for storing sensitive non-relational data.
 
 To see this in action, have a look at `src/use/storage.ts`. The following code is used to initialize the storage mechanism and ensure that it is encrypted when the application is running on a device in a web-mobile context:
 
 ```typescript
-const storage = new Storage({
-  driverOrder: [Drivers.SecureStorage, Drivers.IndexedDB, Drivers.LocalStorage],
-});
+const storage = new KeyValueStorage();
 let initialized = false;
-
-const isReadyForInitialization = async (): Promise<boolean> => {
-  if (isPlatform('hybrid')) {
-    const { getDatabaseKey } = useEncryption();
-    const key = await getDatabaseKey();
-    if (!key) {
-      return false;
-    }
-    await storage.defineDriver(IonicSecureStorageDriver);
-    storage.setEncryptionKey(key);
-  }
-  return true;
-};
 
 const isReady = async (): Promise<boolean> => {
   if (!initialized) {
-    if (await isReadyForInitialization()) {
-      await storage.create();
-      initialized = true;
-    }
+    const { getDatabaseKey } = useEncryption();
+    const key = isPlatform('hybrid') ? await getDatabaseKey() : '';
+    await storage.create(key || '');
+    initialized = true;
   }
   return initialized;
 };
@@ -106,13 +91,13 @@ In this application, we use it to store some user preference information. Clearl
 
 ### Running on Web (KV Pair)
 
-Note that `@ionic/storage` also will store key-value pair data in a web based context using a local storage mechanism such as IndexedDB. This allows you to use the same code when using `ionic serve` in development that you would also use on your web-mobile application when using Capacitor or Cordova to build your application. **The key-value pair data stored in this way should not be considered secure and should only be used within your development workflow.**
+Note that the `Key-Value API` also will store key-value pair data in a web based context using the localStorage API. This allows you to use the same code when using `ionic serve` in development that you would also use on your web-mobile application when using Capacitor or Cordova to build your application. **The key-value pair data stored in this way should not be considered secure and should only be used within your development workflow.**
 
 ### Relational Data Storage
 
 Secure Storage supports traditional relational database storage for cases where the key-value pair storage is not sufficient. When using relational storage, it is up to your application to create and manage the required tables as well as the CRUD operations that your data model requires.
 
-In this sample, the reltional database information is seperated into several files:
+In this sample, the relational database information is separated into several files:
 
 - `src/use/database.ts` - handles the overall database schema
 - `src/use/tasting-notes-database.ts` - handles the Tasting Notes related CRUD operations
@@ -160,14 +145,14 @@ Since getting the handle will open and initialize the data if needed, the applic
 In order to cleanly handle operating offline, this application contains both database and Restful API related CRUD operations. Having a look at the tasting notes, we have the following files:
 
 - `src/use/tasting-notes-api.ts` - perform tasting notes related CRUD operations against the Restful API
-- `src/use/tasting-notes-database.ts` - perform tasting notes related CRUD operations agsainst the local database
+- `src/use/tasting-notes-database.ts` - perform tasting notes related CRUD operations against the local database
 - `src/use/tasting-notes.ts` - determine if the application is running in a mobile or a web-based context and behave accordingly
 
 Splitting the responsibilities like this not only adheres to the best-practices of the Single Responsibility Principle, but it also allows use to more cleanly perform the synchronization operations.
 
 ### Mobile (Offline First)
 
-The mobile code is written using an offline first methodology. As such, all READ operations comes from the data currently in the database. Similarily, CREATE and UPDATE operations create and update data in the database, marking it as with an INSERT or UPDATE status, and DELETE operations mark the row in the database with a DELETE status.
+The mobile code is written using an offline first methodology. As such, all READ operations comes from the data currently in the database. Similarly, CREATE and UPDATE operations create and update data in the database, marking it as with an INSERT or UPDATE status, and DELETE operations mark the row in the database with a DELETE status.
 
 At appropriate times, the data is then synchronized with the backend Restful API. In this application, those "appropriate times" are at login and whenever the user performs a manual sync via the sync button.
 
@@ -175,7 +160,7 @@ As such, the logic in `src/use/tasting-notes.ts` always uses the "database" rout
 
 ### Web (No Offline)
 
-The web application cannnot take advantage of the relational database. As such, it is written to only work in an online fashion. As such, the logic in `src/use/tasting-notes.ts` uses the "API" routines in a web context.
+The web application cannot take advantage of the relational database. As such, it is written to only work in an online fashion. As such, the logic in `src/use/tasting-notes.ts` uses the "API" routines in a web context.
 
 ### Sync
 
@@ -222,7 +207,7 @@ The order of operations is:
 
 Since the Tea Categories cannot be maintained by this application, we only need to perform the reload stop for them.
 
-This is a very simple sync opertation. It does not take items such as crash detection and mitigation into account. If your application needs that, then you will need to expand this pattern to meet your needs.
+This is a very simple sync operation. It does not take items such as crash detection and mitigation into account. If your application needs that, then you will need to expand this pattern to meet your needs.
 
 ## Conclusion
 

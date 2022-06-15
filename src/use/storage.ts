@@ -1,32 +1,16 @@
 import useEncryption from '@/use/encryption';
-import IonicSecureStorageDriver from '@ionic-enterprise/secure-storage/driver';
-import { Drivers, Storage } from '@ionic/storage';
+import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 
-const storage = new Storage({
-  driverOrder: [Drivers.SecureStorage, Drivers.IndexedDB, Drivers.LocalStorage],
-});
+const storage = new KeyValueStorage();
 let initialized = false;
-
-const isReadyForInitialization = async (): Promise<boolean> => {
-  if (isPlatform('hybrid')) {
-    const { getDatabaseKey } = useEncryption();
-    const key = await getDatabaseKey();
-    if (!key) {
-      return false;
-    }
-    await storage.defineDriver(IonicSecureStorageDriver);
-    storage.setEncryptionKey(key);
-  }
-  return true;
-};
 
 const isReady = async (): Promise<boolean> => {
   if (!initialized) {
-    if (await isReadyForInitialization()) {
-      await storage.create();
-      initialized = true;
-    }
+    const { getDatabaseKey } = useEncryption();
+    const key = isPlatform('hybrid') ? await getDatabaseKey() : '';
+    await storage.create(key || '');
+    initialized = true;
   }
   return initialized;
 };
