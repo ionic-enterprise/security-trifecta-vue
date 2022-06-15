@@ -1,7 +1,7 @@
 import { Session } from '@/models';
 import useSessionVault, { UnlockMode } from '@/use/session-vault';
 import useVaultFactory from '@/use/vault-factory';
-import { DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
+import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
 
 jest.mock('@/use/vault-factory');
@@ -134,6 +134,35 @@ describe('useSessionVault', () => {
         expect(mockVault.updateConfig).toHaveBeenCalledWith(expectedConfig);
       }
     );
+
+    describe('device mode', () => {
+      it('provisions the FaceID permissions if needed', async () => {
+        Device.isBiometricsAllowed = jest.fn(() => Promise.resolve(BiometricPermissionState.Prompt));
+        Device.showBiometricPrompt = jest.fn(() => Promise.resolve());
+        const { setUnlockMode } = useSessionVault();
+        await setUnlockMode('Device');
+        expect(Device.showBiometricPrompt).toHaveBeenCalledTimes(1);
+        expect(Device.showBiometricPrompt).toHaveBeenCalledWith({
+          iosBiometricsLocalizedReason: 'Authenticate to continue',
+        });
+      });
+
+      it('does not provision the FaceID permissions if permissions have already been granted', async () => {
+        Device.isBiometricsAllowed = jest.fn(() => Promise.resolve(BiometricPermissionState.Granted));
+        Device.showBiometricPrompt = jest.fn(() => Promise.resolve());
+        const { setUnlockMode } = useSessionVault();
+        await setUnlockMode('Device');
+        expect(Device.showBiometricPrompt).not.toHaveBeenCalled();
+      });
+
+      it('does not provision the FaceID permissions if permissions have already been denied', async () => {
+        Device.isBiometricsAllowed = jest.fn(() => Promise.resolve(BiometricPermissionState.Denied));
+        Device.showBiometricPrompt = jest.fn(() => Promise.resolve());
+        const { setUnlockMode } = useSessionVault();
+        await setUnlockMode('Device');
+        expect(Device.showBiometricPrompt).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('canUnlock', () => {

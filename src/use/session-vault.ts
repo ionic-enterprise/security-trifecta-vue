@@ -1,6 +1,6 @@
 import { Session } from '@/models';
 import useVaultFactory from '@/use/vault-factory';
-import { DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
+import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
 import { modalController } from '@ionic/vue';
 import AppPinDialog from '@/components/AppPinDialog.vue';
@@ -62,12 +62,19 @@ const getVaultType = async (): Promise<VaultType | undefined> => {
   }
 };
 
+const provision = async (): Promise<void> => {
+  if ((await Device.isBiometricsAllowed()) === BiometricPermissionState.Prompt) {
+    await Device.showBiometricPrompt({ iosBiometricsLocalizedReason: 'Authenticate to continue' });
+  }
+};
+
 const setUnlockMode = async (unlockMode: UnlockMode): Promise<void> => {
   let type: VaultType;
   let deviceSecurityType: DeviceSecurityType;
 
   switch (unlockMode) {
     case 'Device':
+      await provision();
       type = VaultType.DeviceSecurity;
       deviceSecurityType = DeviceSecurityType.Both;
       break;
