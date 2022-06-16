@@ -2,15 +2,7 @@ const byStringProp = (x1: any, x2: any, propName: string): number => {
   const str1 = x1[propName].trim().toUpperCase();
   const str2 = x2[propName].trim().toUpperCase();
 
-  if (str1 < str2) {
-    return -1;
-  }
-
-  if (str1 > str2) {
-    return 1;
-  }
-
-  return 0;
+  return str1.localeCompare(str2);
 };
 
 const byName = (x1: { name: string }, x2: { name: string }): number => {
