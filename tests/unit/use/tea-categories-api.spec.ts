@@ -56,7 +56,7 @@ describe('useTeaCategories', () => {
   beforeEach(() => {
     initializeTestData();
     jest.clearAllMocks();
-    (client.get as any).mockResolvedValue({ data: teaCategories });
+    (client.get as jest.Mock).mockResolvedValue({ data: teaCategories });
   });
 
   describe('getAll', () => {

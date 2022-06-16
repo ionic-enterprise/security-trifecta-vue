@@ -73,7 +73,6 @@ import {
   IonSelectOption,
   IonTitle,
   IonToolbar,
-  isPlatform,
 } from '@ionic/vue';
 import { logInOutline, lockOpenOutline } from 'ionicons/icons';
 import { Device } from '@ionic-enterprise/identity-vault';
@@ -104,11 +103,11 @@ export default defineComponent({
     IonToolbar,
   },
   setup() {
-    const { canUnlock: canUnlockSession, setUnlockMode, getSession } = useSessionVault();
+    const { canUnlock: canUnlockSession, canUseLocking, setUnlockMode, getSession } = useSessionVault();
     const { login } = useAuth();
     const router = useRouter();
     const errorMessage = ref('');
-    const displayUnlockOptions = isPlatform('hybrid');
+    const displayUnlockOptions = canUseLocking();
     const canUnlock = ref(false);
     const sync = useSync();
 
@@ -143,9 +142,7 @@ export default defineComponent({
       }
     });
 
-    canUnlockSession().then((x: boolean) => {
-      canUnlock.value = x && isPlatform('hybrid');
-    });
+    canUnlockSession().then((x: boolean) => (canUnlock.value = x));
 
     const validationSchema = yupObject({
       email: yupString().required().email().label('Email Address'),

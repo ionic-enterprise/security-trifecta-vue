@@ -40,7 +40,7 @@ describe('useTastingNotes', () => {
   beforeEach(() => {
     initializeTestData();
     jest.clearAllMocks();
-    (client.get as any).mockResolvedValue({ data: tastingNotes });
+    (client.get as jest.Mock).mockResolvedValue({ data: tastingNotes });
   });
 
   describe('get all', () => {
@@ -70,7 +70,7 @@ describe('useTastingNotes', () => {
       };
 
       beforeEach(() => {
-        (client.post as any).mockResolvedValue({ data: { id: 73, ...note } });
+        (client.post as jest.Mock).mockResolvedValue({ data: { id: 73, ...note } });
       });
 
       it('posts the new note', async () => {
@@ -95,7 +95,7 @@ describe('useTastingNotes', () => {
       };
 
       beforeEach(() => {
-        (client.post as any).mockResolvedValue({ data: note });
+        (client.post as jest.Mock).mockResolvedValue({ data: note });
       });
 
       it('posts the existing note', async () => {

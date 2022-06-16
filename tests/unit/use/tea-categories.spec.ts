@@ -64,15 +64,15 @@ describe('useTeaCategories', () => {
     const { getAll: getAllFromDatabase } = useTeaCategoriesDatabase();
     initializeTestData();
     jest.clearAllMocks();
-    (getAllFromAPI as any).mockResolvedValue(teaCategories);
-    (getAllFromDatabase as any).mockResolvedValue(teaCategories);
-    (isPlatform as any).mockImplementation((key: string) => key === 'web');
+    (getAllFromAPI as jest.Mock).mockResolvedValue(teaCategories);
+    (getAllFromDatabase as jest.Mock).mockResolvedValue(teaCategories);
+    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
   });
 
   describe('load', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('gets the tea categories', async () => {
@@ -115,7 +115,7 @@ describe('useTeaCategories', () => {
   describe('refresh', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as any).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('gets the tea categories from the database', async () => {

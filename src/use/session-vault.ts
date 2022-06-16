@@ -2,7 +2,7 @@ import { Session } from '@/models';
 import useVaultFactory from '@/use/vault-factory';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
-import { modalController } from '@ionic/vue';
+import { isPlatform, modalController } from '@ionic/vue';
 import AppPinDialog from '@/components/AppPinDialog.vue';
 
 export type UnlockMode = 'Device' | 'SessionPIN' | 'NeverLock' | 'ForceLogin';
@@ -52,8 +52,10 @@ const setSession = async (s: Session): Promise<void> => {
 };
 
 const canUnlock = async (): Promise<boolean> => {
-  return (await vault.doesVaultExist()) && (await vault.isLocked());
+  return isPlatform('hybrid') && (await vault.doesVaultExist()) && (await vault.isLocked());
 };
+
+const canUseLocking = (): boolean => isPlatform('hybrid');
 
 const getVaultType = async (): Promise<VaultType | undefined> => {
   const exists = await vault.doesVaultExist();
@@ -115,6 +117,7 @@ const clearSession = async (): Promise<void> => {
 export default (): any => {
   return {
     canUnlock,
+    canUseLocking,
     clearSession,
     getSession,
     setSession,

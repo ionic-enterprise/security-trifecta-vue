@@ -28,7 +28,7 @@ describe('usePreferences', () => {
       const { getValue } = useStorage();
       const { prefersDarkMode, load } = usePreferences();
       prefersDarkMode.value = false;
-      (getValue as any).mockResolvedValue(true);
+      (getValue as jest.Mock).mockResolvedValue(true);
       await load();
       expect(getValue).toHaveBeenCalledTimes(1);
       expect(getValue).toHaveBeenCalledWith('darkMode');
@@ -38,7 +38,7 @@ describe('usePreferences', () => {
       const { getValue } = useStorage();
       const { prefersDarkMode, load } = usePreferences();
       prefersDarkMode.value = false;
-      (getValue as any).mockResolvedValue(true);
+      (getValue as jest.Mock).mockResolvedValue(true);
       await load();
       expect(prefersDarkMode.value).toEqual(true);
     });

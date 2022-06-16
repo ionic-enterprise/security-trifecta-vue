@@ -108,7 +108,7 @@ describe('useSync', () => {
     const { getAll } = useTastingNotesDatabase();
     initializeTestData();
     jest.clearAllMocks();
-    (getAll as any).mockResolvedValue(tastingNotes);
+    (getAll as jest.Mock).mockResolvedValue(tastingNotes);
   });
 
   it('gets the notes for the current user from the database, including deleted notes', async () => {

@@ -31,7 +31,7 @@ describe('useStorage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (isPlatform as any).mockImplementation((key: string) => key === 'web');
+    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
   });
 
   it('creates the storage on the first call', async () => {
@@ -66,7 +66,7 @@ describe('useStorage', () => {
 
     it('returns the value', async () => {
       const { getValue } = useStorage();
-      (store.get as any).mockResolvedValue(427349);
+      (store.get as jest.Mock).mockResolvedValue(427349);
       expect(await getValue('some-key')).toEqual(427349);
     });
   });

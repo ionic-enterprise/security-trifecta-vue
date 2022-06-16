@@ -3,7 +3,12 @@ import useSessionVault, { UnlockMode } from '@/use/session-vault';
 import useVaultFactory from '@/use/vault-factory';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
+import { isPlatform } from '@ionic/vue';
 
+jest.mock('@ionic/vue', () => {
+  const actual = jest.requireActual('@ionic/vue');
+  return { ...actual, isPlatform: jest.fn().mockReturnValue(true) };
+});
 jest.mock('@/use/vault-factory');
 jest.mock('@/router');
 
@@ -31,6 +36,7 @@ describe('useSessionVault', () => {
       unlockVaultOnLoad: false,
     });
     jest.clearAllMocks();
+    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
   });
 
   it('starts with an undefined session', async () => {
@@ -92,7 +98,7 @@ describe('useSessionVault', () => {
 
     it('gets the session from the vault', async () => {
       const { getSession } = useSessionVault();
-      (mockVault.getValue as any).mockResolvedValue(testSession);
+      (mockVault.getValue as jest.Mock).mockResolvedValue(testSession);
       expect(await getSession()).toEqual(testSession);
       expect(mockVault.getValue).toHaveBeenCalledTimes(1);
       expect(mockVault.getValue).toHaveBeenCalledWith('session');
@@ -100,7 +106,7 @@ describe('useSessionVault', () => {
 
     it('caches the retrieved session', async () => {
       const { getSession } = useSessionVault();
-      (mockVault.getValue as any).mockResolvedValue(testSession);
+      (mockVault.getValue as jest.Mock).mockResolvedValue(testSession);
       await getSession();
       await getSession();
       expect(mockVault.getValue).toHaveBeenCalledTimes(1);
@@ -165,24 +171,43 @@ describe('useSessionVault', () => {
     });
   });
 
+  describe('canUseLocking', () => {
+    it('is false for web', () => {
+      (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
+      const { canUseLocking } = useSessionVault();
+      expect(canUseLocking()).toBe(false);
+    });
+
+    it('is true for hybrid', () => {
+      (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+      const { canUseLocking } = useSessionVault();
+      expect(canUseLocking()).toBe(true);
+    });
+  });
+
   describe('canUnlock', () => {
     it.each([
-      [true, true, true],
-      [false, false, true],
-      [false, true, false],
-    ])('is %s for exists: %s locked %s', async (expected: boolean, exists: boolean, locked: boolean) => {
-      const { canUnlock } = useSessionVault();
-      mockVault.isLocked.mockResolvedValue(locked);
-      mockVault.doesVaultExist.mockResolvedValue(exists);
-      expect(await canUnlock()).toBe(expected);
-    });
+      [true, true, true, 'hybrid'],
+      [false, false, true, 'hybrid'],
+      [false, true, false, 'hybrid'],
+      [false, true, true, 'web'],
+    ])(
+      'is %s for exists: %s locked %s on %s',
+      async (expected: boolean, exists: boolean, locked: boolean, platform: string) => {
+        (isPlatform as jest.Mock).mockImplementation((key: string) => key === platform);
+        const { canUnlock } = useSessionVault();
+        mockVault.isLocked.mockResolvedValue(locked);
+        mockVault.doesVaultExist.mockResolvedValue(exists);
+        expect(await canUnlock()).toBe(expected);
+      }
+    );
   });
 
   describe('on lock', () => {
     beforeEach(async () => {
       const { setSession } = useSessionVault();
       await setSession(testSession);
-      (mockVault.getValue as any).mockResolvedValue(undefined);
+      (mockVault.getValue as jest.Mock).mockResolvedValue(undefined);
     });
 
     it('clears the session cache', async () => {

@@ -15,7 +15,7 @@ describe('useAuth', () => {
     const { login } = useAuth();
     const { client } = useBackendAPI();
     beforeEach(() => {
-      (client.post as any).mockResolvedValue({
+      (client.post as jest.Mock).mockResolvedValue({
         data: { success: false },
       });
     });
@@ -42,7 +42,7 @@ describe('useAuth', () => {
           lastName: 'McTest',
           email: 'test@test.com',
         };
-        (client.post as any).mockResolvedValue({
+        (client.post as jest.Mock).mockResolvedValue({
           data: {
             success: true,
             user,

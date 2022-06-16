@@ -3,22 +3,16 @@ import useSessionVault from '@/use/session-vault';
 import useSync from '@/use/sync';
 import LoginPage from '@/views/LoginPage.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
-import { isPlatform } from '@ionic/vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
 import waitForExpect from 'wait-for-expect';
 
-jest.mock('@ionic/vue', () => {
-  const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn() };
-});
 jest.mock('@/use/auth');
 jest.mock('@/use/session-vault');
 jest.mock('@/use/sync');
 
-describe.skip('LoginPage.vue', () => {
-  let currentPlatform = 'hybrid';
+describe('LoginPage.vue', () => {
   let router: Router;
 
   const mountView = async (): Promise<VueWrapper<any>> => {
@@ -36,15 +30,15 @@ describe.skip('LoginPage.vue', () => {
   };
 
   beforeEach(() => {
-    currentPlatform = 'hybrid';
-    (isPlatform as any).mockImplementation((key: string) => key === currentPlatform);
     jest.clearAllMocks();
+    const { canUseLocking } = useSessionVault();
+    (canUseLocking as jest.Mock).mockReturnValue(true);
   });
 
   describe('without a session that can be unlocked', () => {
     beforeEach(() => {
       const { canUnlock } = useSessionVault();
-      (canUnlock as any).mockResolvedValue(false);
+      (canUnlock as jest.Mock).mockResolvedValue(false);
     });
 
     it('displays the title', async () => {
@@ -69,14 +63,15 @@ describe.skip('LoginPage.vue', () => {
     });
 
     describe('unlock mode', () => {
-      it('is displayed on native', async () => {
+      it('is displayed', async () => {
         const wrapper = await mountView();
         const select = wrapper.find('[data-testid="unlock-opt-select"]');
         expect(select.exists()).toBe(true);
       });
 
-      it('is not displayed on the web', async () => {
-        currentPlatform = 'web';
+      it('is not displayed if the app cannot use locking', async () => {
+        const { canUseLocking } = useSessionVault();
+        (canUseLocking as jest.Mock).mockReturnValue(false);
         const wrapper = await mountView();
         const select = wrapper.find('[data-testid="unlock-opt-select"]');
         expect(select.exists()).toBe(false);
@@ -150,19 +145,19 @@ describe.skip('LoginPage.vue', () => {
       const password = wrapper.findComponent('[data-testid="password-input"]');
 
       await flushPromises();
-      await waitForExpect(() => expect(button.attributes().disabled).toBe('true'));
+      await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(true));
 
       await email.setValue('foobar');
       await flushPromises();
-      await waitForExpect(() => expect(button.attributes().disabled).toBe('true'));
+      await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(true));
 
       await password.setValue('mypassword');
       await flushPromises();
-      await waitForExpect(() => expect(button.attributes().disabled).toBe('true'));
+      await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(true));
 
       await email.setValue('foobar@baz.com');
       await flushPromises();
-      await waitForExpect(() => expect(button.attributes().disabled).toBe('false'));
+      await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(false));
     });
 
     it('does not display the unlock button', async () => {
@@ -194,7 +189,7 @@ describe.skip('LoginPage.vue', () => {
       describe('if the login succeeds', () => {
         beforeEach(() => {
           const { login } = useAuth();
-          (login as any).mockResolvedValue(true);
+          (login as jest.Mock).mockResolvedValue(true);
         });
 
         it('does not show an error', async () => {
@@ -235,7 +230,7 @@ describe.skip('LoginPage.vue', () => {
       describe('if the login fails', () => {
         beforeEach(() => {
           const { login } = useAuth();
-          (login as any).mockResolvedValue(false);
+          (login as jest.Mock).mockResolvedValue(false);
         });
 
         it('does not show an error', async () => {
@@ -267,7 +262,7 @@ describe.skip('LoginPage.vue', () => {
   describe('with a session that can be unlocked', () => {
     beforeEach(() => {
       const { canUnlock } = useSessionVault();
-      (canUnlock as any).mockResolvedValue(true);
+      (canUnlock as jest.Mock).mockResolvedValue(true);
     });
 
     it('displays the title', async () => {
@@ -332,18 +327,5 @@ describe.skip('LoginPage.vue', () => {
         expect(router.replace).toHaveBeenCalledWith('/');
       });
     });
-  });
-
-  it('is in "sign in" mode on the web, even if we have a session', async () => {
-    currentPlatform = 'web';
-    const { canUnlock } = useSessionVault();
-    (canUnlock as any).mockResolvedValue(true);
-    const wrapper = await mountView();
-    const unlock = wrapper.find('[data-testid="unlock-button"]');
-    const email = wrapper.find('[data-testid="email-input"]');
-    const password = wrapper.find('[data-testid="password-input"]');
-    expect(unlock.exists()).toBe(false);
-    expect(email.exists()).toBe(true);
-    expect(password.exists()).toBe(true);
   });
 });
