@@ -82,7 +82,7 @@ describe('useTeaCategories', () => {
         expect(getAll).toHaveBeenCalledTimes(1);
       });
 
-      it('trims the notes in the database', async () => {
+      it('trims the tea categories in the database', async () => {
         const { trim } = useTeaCategoriesDatabase();
         const { load } = useTeaCategories();
         await load();
@@ -90,7 +90,7 @@ describe('useTeaCategories', () => {
         expect(trim).toHaveBeenCalledWith(teaCategories.map((x) => x.id as number));
       });
 
-      it('upserts each of the tasting notes', async () => {
+      it('upserts each of the tea categories', async () => {
         const { upsert } = useTeaCategoriesDatabase();
         const { load } = useTeaCategories();
         await load();
