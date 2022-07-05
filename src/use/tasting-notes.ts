@@ -13,8 +13,7 @@ const load = async (): Promise<void> => {
 
     const notes = await getAll();
     await trim(notes.map((x: TastingNote) => x.id as number));
-    const upserts: Array<Promise<any>> = [];
-    notes.forEach((n: TastingNote) => upserts.push(upsert(n)));
+    const upserts: Array<Promise<any>> = notes.map((note: TastingNote) => upsert(note));
     await Promise.all(upserts);
   }
 };
