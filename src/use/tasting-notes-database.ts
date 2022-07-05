@@ -138,7 +138,7 @@ const update = async (note: TastingNote): Promise<TastingNote | undefined> => {
 };
 
 const save = async (note: TastingNote): Promise<TastingNote> => {
-  return (note.id ? await update(note) : await add(note)) || note;
+  return (await (note.id ? update(note) : add(note))) || note;
 };
 
 const upsert = async (note: TastingNote): Promise<void> => {

@@ -202,7 +202,7 @@ describe('useTastingNotes', () => {
         const { save: saveToDatabase } = useTastingNotesDatabase();
 
         beforeEach(() => {
-          (saveToDatabase as jest.Mock).mockResolvedValue({ id: 73, syncStatus: 'INSERT' as const, ...note });
+          (saveToDatabase as jest.Mock).mockResolvedValue({ id: 73, ...note });
           (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
         });
 
@@ -213,13 +213,13 @@ describe('useTastingNotes', () => {
         });
 
         it('resolves the saved note', async () => {
-          expect(await save(note)).toEqual({ id: 73, syncStatus: 'INSERT' as const, ...note });
+          expect(await save(note)).toEqual({ id: 73, ...note });
         });
 
         it('adds the note to the notes list', async () => {
           await save(note);
           expect(notes.value.length).toEqual(4);
-          expect(notes.value[3]).toEqual({ id: 73, syncStatus: 'INSERT' as const, ...note });
+          expect(notes.value[3]).toEqual({ id: 73, ...note });
         });
       });
 
@@ -261,7 +261,7 @@ describe('useTastingNotes', () => {
         const { save: saveToDatabase } = useTastingNotesDatabase();
 
         beforeEach(() => {
-          (saveToDatabase as jest.Mock).mockResolvedValue({ syncStatus: 'UPDATE' as const, ...note });
+          (saveToDatabase as jest.Mock).mockResolvedValue(note);
           (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
         });
 
@@ -272,13 +272,13 @@ describe('useTastingNotes', () => {
         });
 
         it('resolves the saved note', async () => {
-          expect(await save(note)).toEqual({ syncStatus: 'UPDATE' as const, ...note });
+          expect(await save(note)).toEqual(note);
         });
 
         it('update the note to the notes list', async () => {
           await save(note);
           expect(notes.value.length).toEqual(3);
-          expect(notes.value[0]).toEqual({ syncStatus: 'UPDATE' as const, ...note });
+          expect(notes.value[0]).toEqual(note);
         });
       });
 
