@@ -166,7 +166,7 @@ The web application cannot take advantage of the relational database. As such, i
 
 Since all operations in a mobile context are run against the database, we need a way to sync the database with the Restful API. This sample application uses a very simple sync mechanism that could easily be expanded upon if need be. See `/src/use/sync.ts` for details.
 
-In this application, the only application that can be changed is the tasting notes. As such, it has the most complicated sync operation:
+In this application, the only data that can be changed is the tasting notes. As such, it has the most complicated sync operation:
 
 ```typescript
 const syncTastingNotes = async (): Promise<void> => {
