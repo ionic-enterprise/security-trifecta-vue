@@ -1,6 +1,11 @@
 {
   "appId": "io.ionic.csdemosecurestoragevue",
-  "appName": "cs-demo-secure-storage-vue",
+  "appName": "Secure Storage Vue",
   "webDir": "dist",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
 }

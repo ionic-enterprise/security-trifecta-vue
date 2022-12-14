@@ -12,6 +12,7 @@ dependencies {
     implementation project(':capacitor-app')
     implementation project(':capacitor-haptics')
     implementation project(':capacitor-keyboard')
+    implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-status-bar')
     implementation "net.zetetic:android-database-sqlcipher:4.5.2"
     implementation "androidx.sqlite:sqlite:2.0.1"

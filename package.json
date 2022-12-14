@@ -8,6 +8,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "assets": "capacitor-assets generate --iconBackgroundColor '#f1ebe1' --splashBackgroundColor '#f1ebe1' --iconBackgroundColorDark '#110b00' --splashBackgroundColorDark '#110b00'",
     "build": "vue-cli-service build && cap sync",
     "lint": "vue-cli-service lint",
     "prepare": "husky install",
@@ -25,6 +26,7 @@
     "@capacitor/haptics": "^4.0.0",
     "@capacitor/ios": "^4.0.0",
     "@capacitor/keyboard": "^4.0.0",
+    "@capacitor/splash-screen": "~4.1.2",
     "@capacitor/status-bar": "^4.0.0",
     "@ionic-enterprise/identity-vault": "~5.9.1",
     "@ionic-enterprise/secure-storage": "~2.3.0",
@@ -38,6 +40,7 @@
     "yup": "~0.32.11"
   },
   "devDependencies": {
+    "@capacitor/assets": "~2.0.4",
     "@capacitor/cli": "^4.0.0",
     "@ionic/prettier-config": "~2.0.0",
     "@types/jest": "~27.5.1",
