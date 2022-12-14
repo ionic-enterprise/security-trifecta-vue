@@ -43,7 +43,7 @@ describe('LoginPage.vue', () => {
 
     it('displays the title', async () => {
       const wrapper = await mountView();
-      const titles = wrapper.findAll('ion-title');
+      const titles = wrapper.findAll('ion-card-title');
       expect(titles).toHaveLength(1);
       expect(titles[0].text()).toBe('Login');
     });
@@ -265,7 +265,7 @@ describe('LoginPage.vue', () => {
 
     it('displays the title', async () => {
       const wrapper = await mountView();
-      const titles = wrapper.findAll('ion-title');
+      const titles = wrapper.findAll('ion-card-title');
       expect(titles).toHaveLength(1);
       expect(titles[0].text()).toBe('Unlock');
     });

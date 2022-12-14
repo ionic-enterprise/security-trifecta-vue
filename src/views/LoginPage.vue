@@ -1,59 +1,59 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ canUnlock ? 'Unlock' : 'Login' }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content class="main-content">
-      <ion-list v-if="!canUnlock">
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input type="email" name="email" v-model="email" data-testid="email-input"></ion-input>
-        </ion-item>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ canUnlock ? 'Unlock' : 'Login' }}</ion-card-title>
+          <ion-card-subtitle> Secure Storage Demo Application (Vue) </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list v-if="!canUnlock">
+            <ion-item>
+              <ion-label position="floating">Email</ion-label>
+              <ion-input type="email" name="email" v-model="email" data-testid="email-input"></ion-input>
+            </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Password</ion-label>
-          <ion-input type="password" name="password" v-model="password" data-testid="password-input"></ion-input>
-        </ion-item>
+            <ion-item>
+              <ion-label position="floating">Password</ion-label>
+              <ion-input type="password" name="password" v-model="password" data-testid="password-input"></ion-input>
+            </ion-item>
 
-        <ion-item v-if="displayUnlockOptions">
-          <ion-label>Session Locking</ion-label>
-          <ion-select v-model="unlockMode" data-testid="unlock-opt-select">
-            <ion-select-option v-for="unlockMode of unlockModes" :value="unlockMode.mode" :key="unlockMode.mode">{{
-              unlockMode.label
-            }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
+            <ion-item v-if="displayUnlockOptions">
+              <ion-label>Session Locking</ion-label>
+              <ion-select v-model="unlockMode" data-testid="unlock-opt-select">
+                <ion-select-option v-for="unlockMode of unlockModes" :value="unlockMode.mode" :key="unlockMode.mode">{{
+                  unlockMode.label
+                }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
 
-      <div class="unlock-app ion-text-center" v-if="canUnlock" @click="unlockClicked" data-testid="unlock-button">
-        <ion-icon :icon="lockOpenOutline"></ion-icon>
-        <div>Unlock</div>
-      </div>
+          <div class="unlock-app ion-text-center" v-if="canUnlock" @click="unlockClicked" data-testid="unlock-button">
+            <ion-icon :icon="lockOpenOutline"></ion-icon>
+            <div>Unlock</div>
+          </div>
 
-      <div class="error-message ion-padding" data-testid="message-area">
-        <div v-for="(error, idx) of errors" :key="idx">
-          {{ error }}
-        </div>
-        <div v-if="errorMessage">{{ errorMessage }}</div>
-      </div>
+          <div class="error-message ion-padding" data-testid="message-area">
+            <div v-for="(error, idx) of errors" :key="idx">
+              {{ error }}
+            </div>
+            <div v-if="errorMessage">{{ errorMessage }}</div>
+          </div>
+
+          <div>
+            <ion-button
+              expand="full"
+              data-testid="signin-button"
+              :disabled="!(canUnlock || meta.valid)"
+              @click="signinClicked"
+            >
+              {{ canUnlock ? 'Redo Sign In' : 'Sign In' }}
+              <ion-icon slot="end" :icon="logInOutline"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
     </ion-content>
-
-    <ion-footer>
-      <ion-toolbar>
-        <ion-button
-          expand="full"
-          data-testid="signin-button"
-          :disabled="!(canUnlock || meta.valid)"
-          @click="signinClicked"
-        >
-          {{ canUnlock ? 'Redo Sign In' : 'Sign In' }}
-          <ion-icon slot="end" :icon="logInOutline"></ion-icon>
-        </ion-button>
-      </ion-toolbar>
-    </ion-footer>
   </ion-page>
 </template>
 
@@ -64,9 +64,12 @@ import useSync from '@/composables/sync';
 import { Device } from '@ionic-enterprise/identity-vault';
 import {
   IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
   IonContent,
-  IonFooter,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
@@ -75,8 +78,6 @@ import {
   IonPage,
   IonSelect,
   IonSelectOption,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/vue';
 import { lockOpenOutline, logInOutline } from 'ionicons/icons';
 import { useField, useForm } from 'vee-validate';
@@ -158,5 +159,41 @@ const unlockClicked = async () => {
 .unlock-app {
   margin-top: 3em;
   font-size: xx-large;
+}
+
+@media (min-width: 0px) {
+  ion-card {
+    margin-top: 25%;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+}
+@media (min-width: 576px) {
+  ion-card {
+    margin-top: 20%;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}
+@media (min-width: 768px) {
+  ion-card {
+    margin-top: 10%;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+}
+@media (min-width: 992px) {
+  ion-card {
+    margin-top: 10%;
+    margin-left: 25%;
+    margin-right: 25%;
+  }
+}
+@media (min-width: 1200px) {
+  ion-card {
+    margin-top: 10%;
+    margin-left: 30%;
+    margin-right: 30%;
+  }
 }
 </style>
