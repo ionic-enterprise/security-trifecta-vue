@@ -1,4 +1,4 @@
-import useDatabase from '@/use/database';
+import useDatabase from '@/composables/database';
 import { TeaCategory } from '@/models';
 
 const { getHandle } = useDatabase();

@@ -1,5 +1,5 @@
+import useStorage from '@/composables/storage';
 import { ref, watch } from 'vue';
-import useStorage from '@/use/storage';
 
 const { getValue, setValue } = useStorage();
 const prefersDarkMode = ref(false);

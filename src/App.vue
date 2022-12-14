@@ -4,20 +4,10 @@
   </ion-app>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { defineComponent } from 'vue';
-import usePreferences from '@/use/preferences';
+import usePreferences from '@/composables/preferences';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    IonApp,
-    IonRouterOutlet,
-  },
-  setup() {
-    const { load } = usePreferences();
-    load();
-  },
-});
+const { load } = usePreferences();
+load();
 </script>

@@ -1,8 +1,8 @@
-import useBackendAPI from '@/use/backend-api';
-import useTeaCategoriesAPI from '@/use/tea-categories-api';
+import useBackendAPI from '@/composables/backend-api';
+import useTeaCategoriesAPI from '@/composables/tea-categories-api';
 import { TeaCategory } from '@/models';
 
-jest.mock('@/use/backend-api');
+jest.mock('@/composables/backend-api');
 
 describe('useTeaCategories', () => {
   const { client } = useBackendAPI();

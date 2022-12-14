@@ -1,5 +1,5 @@
-import useDatabase from '@/use/database';
-import useSessionVault from '@/use/session-vault';
+import useDatabase from '@/composables/database';
+import useSessionVault from '@/composables/session-vault';
 import { TastingNote } from '@/models';
 
 const { getHandle } = useDatabase();

@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import router from '@/router';
-import useSessionVault from '@/use/session-vault';
+import useSessionVault from '@/composables/session-vault';
 
 const { getSession, clearSession } = useSessionVault();
 

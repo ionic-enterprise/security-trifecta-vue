@@ -1,8 +1,8 @@
-import useBackendAPI from '@/use/backend-api';
-import useTastingNotesAPI from '@/use/tasting-notes-api';
+import useBackendAPI from '@/composables/backend-api';
+import useTastingNotesAPI from '@/composables/tasting-notes-api';
 import { TastingNote } from '@/models';
 
-jest.mock('@/use/backend-api');
+jest.mock('@/composables/backend-api');
 
 describe('useTastingNotes', () => {
   const { client } = useBackendAPI();

@@ -1,19 +1,19 @@
 import { TastingNote } from '@/models';
-import useSync from '@/use/sync';
-import useTeaCategories from '@/use/tea-categories';
-import useTastingNotes from '@/use/tasting-notes';
-import useTastingNotesAPI from '@/use/tasting-notes-api';
-import useTastingNotesDatabase from '@/use/tasting-notes-database';
+import useSync from '@/composables/sync';
+import useTeaCategories from '@/composables/tea-categories';
+import useTastingNotes from '@/composables/tasting-notes';
+import useTastingNotesAPI from '@/composables/tasting-notes-api';
+import useTastingNotesDatabase from '@/composables/tasting-notes-database';
 
 jest.mock('@ionic/vue', () => {
   const actual = jest.requireActual('@ionic/vue');
   return { ...actual, isPlatform: jest.fn() };
 });
-jest.mock('@/use/database');
-jest.mock('@/use/tasting-notes');
-jest.mock('@/use/tasting-notes-api');
-jest.mock('@/use/tasting-notes-database');
-jest.mock('@/use/tea-categories');
+jest.mock('@/composables/database');
+jest.mock('@/composables/tasting-notes');
+jest.mock('@/composables/tasting-notes-api');
+jest.mock('@/composables/tasting-notes-database');
+jest.mock('@/composables/tea-categories');
 
 describe('useSync', () => {
   let tastingNotes: Array<TastingNote>;

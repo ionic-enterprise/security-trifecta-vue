@@ -1,5 +1,5 @@
-import useEncryption from '@/use/encryption';
-import useStorage from '@/use/storage';
+import useEncryption from '@/composables/encryption';
+import useStorage from '@/composables/storage';
 import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 
@@ -7,8 +7,8 @@ jest.mock('@ionic/vue', () => {
   const actual = jest.requireActual('@ionic/vue');
   return { ...actual, isPlatform: jest.fn().mockReturnValue(true) };
 });
-jest.mock('@/use/encryption');
-jest.mock('@/use/vault-factory');
+jest.mock('@/composables/encryption');
+jest.mock('@/composables/vault-factory');
 jest.mock('@ionic-enterprise/secure-storage', () => {
   const actual = jest.requireActual('@ionic-enterprise/secure-storage');
   const mockKeyValueStorage = {

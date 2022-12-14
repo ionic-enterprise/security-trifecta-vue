@@ -1,6 +1,6 @@
-import useVaultFactory from '@/use/vault-factory';
+import useBackendAPI from '@/composables/backend-api';
+import useVaultFactory from '@/composables/vault-factory';
 import { DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
-import useBackendAPI from '@/use/backend-api';
 
 const { createVault } = useVaultFactory();
 const vault = createVault({

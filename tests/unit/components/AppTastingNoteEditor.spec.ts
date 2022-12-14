@@ -1,12 +1,12 @@
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
-import useTastingNotes from '@/use/tasting-notes';
-import useTeaCategories from '@/use/tea-categories';
+import useTastingNotes from '@/composables/tasting-notes';
+import useTeaCategories from '@/composables/tea-categories';
 import { modalController } from '@ionic/vue';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import waitForExpect from 'wait-for-expect';
 
-jest.mock('@/use/tasting-notes');
-jest.mock('@/use/tea-categories');
+jest.mock('@/composables/tasting-notes');
+jest.mock('@/composables/tea-categories');
 
 describe('AppTastingNoteEditor.vue', () => {
   let wrapper: VueWrapper<any>;
@@ -122,11 +122,18 @@ describe('AppTastingNoteEditor.vue', () => {
       },
     });
     await flushPromises();
-    expect(modal.vm.brand).toEqual('Rishi');
-    expect(modal.vm.name).toEqual('Puer Cake');
-    expect(modal.vm.teaCategoryId).toEqual(6);
-    expect(modal.vm.rating).toEqual(5);
-    expect(modal.vm.notes).toEqual('Smooth and peaty, the king of puer teas');
+    expect(find).toHaveBeenCalledTimes(1);
+    expect(find).toHaveBeenCalledWith(73);
+    const brand = modal.findComponent('[data-testid="brand-input"]');
+    const name = modal.findComponent('[data-testid="name-input"]');
+    const rating = modal.findComponent('[data-testid="rating-input"]');
+    const notes = modal.findComponent('[data-testid="notes-textbox"]');
+    const teaCategory = modal.findComponent('[data-testid="tea-type-select"]');
+    expect((brand.element as HTMLInputElement).value).toEqual('Rishi');
+    expect((name.element as HTMLInputElement).value).toEqual('Puer Cake');
+    expect((teaCategory.element as HTMLSelectElement).value).toEqual(6);
+    expect((notes.element as HTMLInputElement).value).toEqual('Smooth and peaty, the king of puer teas');
+    expect((rating as VueWrapper).props().modelValue).toEqual(5);
   });
 
   describe('submit button', () => {
@@ -174,7 +181,7 @@ describe('AppTastingNoteEditor.vue', () => {
       waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(false));
     });
 
-    describe.skip('on click', () => {
+    describe('on click', () => {
       beforeEach(async () => {
         const brand = wrapper.findComponent('[data-testid="brand-input"]');
         const name = wrapper.findComponent('[data-testid="name-input"]');
@@ -229,7 +236,7 @@ describe('AppTastingNoteEditor.vue', () => {
     });
   });
 
-  describe.skip('cancel button', () => {
+  describe('cancel button', () => {
     it('does not save', async () => {
       const { save } = useTastingNotes();
       const button = wrapper.find('[data-testid="cancel-button"]');

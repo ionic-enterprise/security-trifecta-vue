@@ -1,9 +1,9 @@
-import { Session } from '@/models';
-import useVaultFactory from '@/use/vault-factory';
-import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
-import router from '@/router';
-import { isPlatform, modalController } from '@ionic/vue';
 import AppPinDialog from '@/components/AppPinDialog.vue';
+import useVaultFactory from '@/composables/vault-factory';
+import { Session } from '@/models';
+import router from '@/router';
+import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
+import { isPlatform, modalController } from '@ionic/vue';
 
 export type UnlockMode = 'Device' | 'SessionPIN' | 'NeverLock' | 'ForceLogin';
 

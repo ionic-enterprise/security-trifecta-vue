@@ -1,4 +1,4 @@
-import useCompare from '@/use/compare';
+import useCompare from '@/composables/compare';
 
 describe('compare', () => {
   describe('by name', () => {

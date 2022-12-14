@@ -1,15 +1,15 @@
-import useAuth from '@/use/auth';
-import useTastingNotes from '@/use/tasting-notes';
+import useAuth from '@/composables/auth';
+import useTastingNotes from '@/composables/tasting-notes';
 import TastingNotesPage from '@/views/TastingNotesPage.vue';
 import { modalController } from '@ionic/vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
 
-jest.mock('@/use/auth');
-jest.mock('@/use/sync');
-jest.mock('@/use/tasting-notes');
-jest.mock('@/use/vault-factory');
+jest.mock('@/composables/auth');
+jest.mock('@/composables/sync');
+jest.mock('@/composables/tasting-notes');
+jest.mock('@/composables/vault-factory');
 
 describe('TastingNotesPage.vue', () => {
   let router: Router;
@@ -86,7 +86,7 @@ describe('TastingNotesPage.vue', () => {
     expect(items[2].text()).toContain('Puer Cake');
   });
 
-  describe.skip('adding a new note', () => {
+  describe('adding a new note', () => {
     let modal: { present: () => Promise<void> };
     beforeEach(() => {
       modal = {

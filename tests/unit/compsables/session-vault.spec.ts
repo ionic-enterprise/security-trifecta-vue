@@ -1,6 +1,6 @@
 import { Session } from '@/models';
-import useSessionVault, { UnlockMode } from '@/use/session-vault';
-import useVaultFactory from '@/use/vault-factory';
+import useSessionVault, { UnlockMode } from '@/composables/session-vault';
+import useVaultFactory from '@/composables/vault-factory';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
 import { isPlatform } from '@ionic/vue';
@@ -9,7 +9,7 @@ jest.mock('@ionic/vue', () => {
   const actual = jest.requireActual('@ionic/vue');
   return { ...actual, isPlatform: jest.fn().mockReturnValue(true) };
 });
-jest.mock('@/use/vault-factory');
+jest.mock('@/composables/vault-factory');
 jest.mock('@/router');
 
 describe('useSessionVault', () => {

@@ -1,8 +1,8 @@
-import usePreferences from '@/use/preferences';
-import useStorage from '@/use/storage';
+import usePreferences from '@/composables/preferences';
+import useStorage from '@/composables/storage';
 import { flushPromises } from '@vue/test-utils';
 
-jest.mock('@/use/storage');
+jest.mock('@/composables/storage');
 
 describe('usePreferences', () => {
   beforeEach(() => {

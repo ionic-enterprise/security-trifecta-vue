@@ -55,7 +55,7 @@
   </ion-footer>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   IonButton,
   IonButtons,
@@ -74,119 +74,78 @@ import {
   IonToolbar,
   modalController,
 } from '@ionic/vue';
-import { close, shareOutline } from 'ionicons/icons';
-import { computed, defineComponent } from 'vue';
+import { close } from 'ionicons/icons';
+import { computed } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import { object as yupObject, string as yupString, number as yupNumber } from 'yup';
 import AppRating from './AppRating.vue';
-import useTastingNotes from '@/use/tasting-notes';
-import useTeaCategories from '@/use/tea-categories';
+import useTastingNotes from '@/composables/tasting-notes';
+import useTeaCategories from '@/composables/tea-categories';
 import { TastingNote } from '@/models';
 
-export default defineComponent({
-  name: 'AppTastingNoteEditor',
-  components: {
-    AppRating,
-    IonButton,
-    IonButtons,
-    IonContent,
-    IonFooter,
-    IonHeader,
-    IonIcon,
-    IonInput,
-    IonItem,
-    IonLabel,
-    IonList,
-    IonSelect,
-    IonSelectOption,
-    IonTextarea,
-    IonTitle,
-    IonToolbar,
-  },
-  props: {
-    noteId: Number,
-  },
-  setup(props) {
-    const { categories, refresh: refreshTeaCategories } = useTeaCategories();
-
-    const validationSchema = yupObject({
-      brand: yupString().required().label('Brand'),
-      name: yupString().required().label('Name'),
-      notes: yupString().required().label('Notes'),
-      teaCategoryId: yupNumber().required().label('Type of Tea'),
-      rating: yupNumber().required().label('Rating'),
-    });
-
-    const { errors, meta } = useForm({ validationSchema });
-    const { value: brand } = useField('brand');
-    const { value: name } = useField('name');
-    const { value: notes } = useField('notes');
-    const { value: teaCategoryId } = useField('teaCategoryId');
-    const { value: rating } = useField('rating');
-
-    const buttonLabel = computed(() => (props.noteId ? 'Update' : 'Add'));
-    const title = computed(() => `${props.noteId ? '' : 'Add New '}Tasting Note`);
-
-    const initialize = async () => {
-      if (props.noteId) {
-        const { find } = useTastingNotes();
-        const note = await find(props.noteId);
-        if (note) {
-          brand.value = note.brand;
-          name.value = note.name;
-          notes.value = note.notes;
-          teaCategoryId.value = note.teaCategoryId;
-          rating.value = note.rating;
-        }
-      }
-
-      if (categories.value.length === 0) {
-        refreshTeaCategories();
-      }
-    };
-
-    const cancel = async () => {
-      await modalController.dismiss();
-    };
-
-    const submit = async () => {
-      const { save } = useTastingNotes();
-      const note: TastingNote = {
-        brand: brand.value as string,
-        name: name.value as string,
-        notes: notes.value as string,
-        teaCategoryId: teaCategoryId.value as number,
-        rating: rating.value as number,
-      };
-      if (props.noteId) {
-        note.id = props.noteId;
-      }
-      await save(note);
-      await modalController.dismiss();
-    };
-
-    initialize();
-
-    return {
-      close,
-      shareOutline,
-
-      cancel,
-      submit,
-
-      brand,
-      buttonLabel,
-      categories,
-      errors,
-      meta,
-      name,
-      notes,
-      rating,
-      teaCategoryId,
-      title,
-    };
-  },
+const props = defineProps({
+  noteId: Number,
 });
+
+const { categories, refresh: refreshTeaCategories } = useTeaCategories();
+
+const validationSchema = yupObject({
+  brand: yupString().required().label('Brand'),
+  name: yupString().required().label('Name'),
+  notes: yupString().required().label('Notes'),
+  teaCategoryId: yupNumber().required().label('Type of Tea'),
+  rating: yupNumber().required().label('Rating'),
+});
+
+const { errors, meta } = useForm({ validationSchema });
+const { value: brand } = useField('brand');
+const { value: name } = useField('name');
+const { value: notes } = useField('notes');
+const { value: teaCategoryId } = useField('teaCategoryId');
+const { value: rating } = useField('rating');
+
+const buttonLabel = computed(() => (props.noteId ? 'Update' : 'Add'));
+const title = computed(() => `${props.noteId ? '' : 'Add New '}Tasting Note`);
+
+const initialize = async () => {
+  if (props.noteId) {
+    const { find } = useTastingNotes();
+    const note = await find(props.noteId);
+    if (note) {
+      brand.value = note.brand;
+      name.value = note.name;
+      notes.value = note.notes;
+      teaCategoryId.value = note.teaCategoryId;
+      rating.value = note.rating;
+    }
+  }
+
+  if (categories.value.length === 0) {
+    refreshTeaCategories();
+  }
+};
+
+const cancel = async () => {
+  await modalController.dismiss();
+};
+
+const submit = async () => {
+  const { save } = useTastingNotes();
+  const note: TastingNote = {
+    brand: brand.value as string,
+    name: name.value as string,
+    notes: notes.value as string,
+    teaCategoryId: teaCategoryId.value as number,
+    rating: rating.value as number,
+  };
+  if (props.noteId) {
+    note.id = props.noteId;
+  }
+  await save(note);
+  await modalController.dismiss();
+};
+
+initialize();
 </script>
 
 <style scoped></style>

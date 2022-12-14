@@ -1,4 +1,4 @@
-import useEncryption from '@/use/encryption';
+import useEncryption from '@/composables/encryption';
 import { DbTransaction, SQLite, SQLiteObject } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 

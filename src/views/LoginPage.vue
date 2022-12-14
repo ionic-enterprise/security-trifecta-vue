@@ -57,7 +57,11 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import useAuth from '@/composables/auth';
+import useSessionVault, { UnlockMode } from '@/composables/session-vault';
+import useSync from '@/composables/sync';
+import { Device } from '@ionic-enterprise/identity-vault';
 import {
   IonButton,
   IonContent,
@@ -74,125 +78,80 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue';
-import { logInOutline, lockOpenOutline } from 'ionicons/icons';
-import { Device } from '@ionic-enterprise/identity-vault';
-import { defineComponent, ref } from 'vue';
-import { useForm, useField } from 'vee-validate';
+import { lockOpenOutline, logInOutline } from 'ionicons/icons';
+import { useField, useForm } from 'vee-validate';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { object as yupObject, string as yupString } from 'yup';
-import useAuth from '@/use/auth';
-import useSessionVault, { UnlockMode } from '@/use/session-vault';
-import useSync from '@/use/sync';
 
-export default defineComponent({
-  name: 'LoginPage',
-  components: {
-    IonButton,
-    IonContent,
-    IonFooter,
-    IonHeader,
-    IonIcon,
-    IonInput,
-    IonItem,
-    IonLabel,
-    IonList,
-    IonPage,
-    IonSelect,
-    IonSelectOption,
-    IonTitle,
-    IonToolbar,
+const { canUnlock: canUnlockSession, canUseLocking, setUnlockMode, getSession } = useSessionVault();
+const { login } = useAuth();
+const router = useRouter();
+const errorMessage = ref('');
+const displayUnlockOptions = canUseLocking();
+const canUnlock = ref(false);
+const sync = useSync();
+
+const mainRoute = '/';
+
+const unlockMode = ref<UnlockMode>('SessionPIN');
+const unlockModes = ref<Array<{ mode: UnlockMode; label: string }>>([
+  {
+    mode: 'SessionPIN',
+    label: 'Session PIN Unlock',
   },
-  setup() {
-    const { canUnlock: canUnlockSession, canUseLocking, setUnlockMode, getSession } = useSessionVault();
-    const { login } = useAuth();
-    const router = useRouter();
-    const errorMessage = ref('');
-    const displayUnlockOptions = canUseLocking();
-    const canUnlock = ref(false);
-    const sync = useSync();
-
-    const mainRoute = '/';
-
-    const unlockMode = ref<UnlockMode>('SessionPIN');
-    const unlockModes = ref<Array<{ mode: UnlockMode; label: string }>>([
-      {
-        mode: 'SessionPIN',
-        label: 'Session PIN Unlock',
-      },
-      {
-        mode: 'NeverLock',
-        label: 'Never Lock Session',
-      },
-      {
-        mode: 'ForceLogin',
-        label: 'Force Login',
-      },
-    ]);
-
-    Device.isBiometricsEnabled().then((enabled: boolean) => {
-      if (enabled) {
-        unlockMode.value = 'Device';
-        unlockModes.value = [
-          {
-            mode: 'Device',
-            label: 'Biometric Unlock',
-          },
-          ...unlockModes.value,
-        ];
-      }
-    });
-
-    canUnlockSession().then((x: boolean) => (canUnlock.value = x));
-
-    const validationSchema = yupObject({
-      email: yupString().required().email().label('Email Address'),
-      password: yupString().required().label('Password'),
-    });
-
-    const { errors, meta } = useForm({ validationSchema });
-    const { value: email } = useField('email');
-    const { value: password } = useField('password');
-
-    const signinClicked = async () => {
-      if (canUnlock.value) {
-        canUnlock.value = false;
-      } else {
-        if (await login(email.value as string, password.value as string)) {
-          await sync();
-          setUnlockMode(unlockMode.value);
-          router.replace(mainRoute);
-        } else {
-          errorMessage.value = 'Invalid email and/or password';
-        }
-      }
-    };
-
-    const unlockClicked = async () => {
-      await getSession();
-      router.replace(mainRoute);
-    };
-
-    return {
-      lockOpenOutline,
-      logInOutline,
-
-      email,
-      password,
-      unlockMode,
-
-      errors,
-      meta,
-      errorMessage,
-
-      canUnlock,
-      displayUnlockOptions,
-      unlockModes,
-
-      signinClicked,
-      unlockClicked,
-    };
+  {
+    mode: 'NeverLock',
+    label: 'Never Lock Session',
   },
+  {
+    mode: 'ForceLogin',
+    label: 'Force Login',
+  },
+]);
+
+Device.isBiometricsEnabled().then((enabled: boolean) => {
+  if (enabled) {
+    unlockMode.value = 'Device';
+    unlockModes.value = [
+      {
+        mode: 'Device',
+        label: 'Biometric Unlock',
+      },
+      ...unlockModes.value,
+    ];
+  }
 });
+
+canUnlockSession().then((x: boolean) => (canUnlock.value = x));
+
+const validationSchema = yupObject({
+  email: yupString().required().email().label('Email Address'),
+  password: yupString().required().label('Password'),
+});
+
+const { errors, meta } = useForm({ validationSchema });
+const { value: email } = useField('email');
+const { value: password } = useField('password');
+
+const signinClicked = async () => {
+  if (canUnlock.value) {
+    canUnlock.value = false;
+  } else {
+    if (await login(email.value as string, password.value as string)) {
+      await sync();
+      setUnlockMode(unlockMode.value);
+      router.replace(mainRoute);
+    } else {
+      errorMessage.value = 'Invalid email and/or password';
+    }
+  }
+};
+
+const unlockClicked = async () => {
+  await getSession();
+  router.replace(mainRoute);
+};
 </script>
 
 <style scoped>

@@ -47,7 +47,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   IonButton,
   IonButtons,
@@ -69,68 +69,41 @@ import {
   modalController,
 } from '@ionic/vue';
 import { add } from 'ionicons/icons';
-import { defineComponent } from 'vue';
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
-import useTastingNotes from '@/use/tasting-notes';
-import usePreferences from '@/use/preferences';
+import useTastingNotes from '@/composables/tasting-notes';
+import usePreferences from '@/composables/preferences';
 import { logOutOutline, sync } from 'ionicons/icons';
-import useAuth from '@/use/auth';
-import useSync from '@/use/sync';
+import useAuth from '@/composables/auth';
+import useSync from '@/composables/sync';
 import { useRouter } from 'vue-router';
 
-export default defineComponent({
-  name: 'TastingNotesPage',
-  components: {
-    IonButton,
-    IonButtons,
-    IonContent,
-    IonFab,
-    IonFabButton,
-    IonHeader,
-    IonIcon,
-    IonItem,
-    IonItemOption,
-    IonItemOptions,
-    IonItemSliding,
-    IonLabel,
-    IonList,
-    IonPage,
-    IonTitle,
-    IonToggle,
-    IonToolbar,
-  },
-  setup() {
-    const { prefersDarkMode } = usePreferences();
-    const { notes, refresh, remove } = useTastingNotes();
-    const { logout } = useAuth();
-    const router = useRouter();
-    const syncDatabase = useSync();
+const { prefersDarkMode } = usePreferences();
+const { notes, refresh, remove } = useTastingNotes();
+const { logout } = useAuth();
+const router = useRouter();
+const syncDatabase = useSync();
 
-    const logoutClicked = async (): Promise<void> => {
-      await logout();
-      router.replace('/login');
-    };
+const logoutClicked = async (): Promise<void> => {
+  await logout();
+  router.replace('/login');
+};
 
-    const presentNoteEditor = async (evt: Event, noteId?: number) => {
-      const modal = await modalController.create({
-        component: AppTastingNoteEditor,
-        componentProps: { noteId },
-        backdropDismiss: false,
-        swipeToClose: true,
-      });
-      modal.present();
-    };
+const presentNoteEditor = async (evt: Event, noteId?: number) => {
+  const modal = await modalController.create({
+    component: AppTastingNoteEditor,
+    componentProps: { noteId },
+    backdropDismiss: false,
+    swipeToClose: true,
+  });
+  modal.present();
+};
 
-    const syncClicked = async () => {
-      await syncDatabase();
-      await refresh();
-    };
+const syncClicked = async () => {
+  await syncDatabase();
+  await refresh();
+};
 
-    refresh();
-
-    return { add, notes, logoutClicked, logOutOutline, prefersDarkMode, presentNoteEditor, remove, sync, syncClicked };
-  },
-});
+refresh();
 </script>
 
 <style scoped>

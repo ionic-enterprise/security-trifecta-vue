@@ -1,8 +1,8 @@
-import useTastingNotesAPI from '@/use/tasting-notes-api';
-import useTastingNotesDatabase from '@/use/tasting-notes-database';
+import useTastingNotesAPI from '@/composables/tasting-notes-api';
+import useTastingNotesDatabase from '@/composables/tasting-notes-database';
 import { TastingNote } from '@/models';
-import { ref } from 'vue';
 import { isPlatform } from '@ionic/vue';
+import { ref } from 'vue';
 
 const notes = ref<Array<TastingNote>>([]);
 

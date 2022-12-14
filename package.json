@@ -13,7 +13,7 @@
     "prepare": "husky install",
     "serve": "vue-cli-service serve",
     "start": "npm run serve",
-    "test": "npm run test:dev",
+    "test": "npm run test:unit",
     "test:dev": "vue-cli-service test:unit --watch",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"

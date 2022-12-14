@@ -1,6 +1,6 @@
+import useBackendAPI from '@/composables/backend-api';
+import useCompare from '@/composables/compare';
 import { TastingNote } from '@/models';
-import useBackendAPI from '@/use/backend-api';
-import useCompare from '@/use/compare';
 
 const { client } = useBackendAPI();
 

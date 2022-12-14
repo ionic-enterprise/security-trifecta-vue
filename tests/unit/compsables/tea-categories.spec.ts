@@ -1,6 +1,6 @@
-import useTeaCategories from '@/use/tea-categories';
-import useTeaCategoriesAPI from '@/use/tea-categories-api';
-import useTeaCategoriesDatabase from '@/use/tea-categories-database';
+import useTeaCategories from '@/composables/tea-categories';
+import useTeaCategoriesAPI from '@/composables/tea-categories-api';
+import useTeaCategoriesDatabase from '@/composables/tea-categories-database';
 import { TeaCategory } from '@/models';
 import { isPlatform } from '@ionic/vue';
 
@@ -8,8 +8,8 @@ jest.mock('@ionic/vue', () => {
   const actual = jest.requireActual('@ionic/vue');
   return { ...actual, isPlatform: jest.fn() };
 });
-jest.mock('@/use/tea-categories-api');
-jest.mock('@/use/tea-categories-database');
+jest.mock('@/composables/tea-categories-api');
+jest.mock('@/composables/tea-categories-database');
 
 describe('useTeaCategories', () => {
   let teaCategories: Array<TeaCategory>;

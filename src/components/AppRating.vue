@@ -10,27 +10,18 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import { IonIcon } from '@ionic/vue';
 import { star, starOutline } from 'ionicons/icons';
 
-export default defineComponent({
-  name: 'AppRating',
-  components: {
-    IonIcon,
-  },
-  emits: ['update:modelValue'],
-  props: {
-    modelValue: {
-      type: Number,
-      default: 0,
-    },
-  },
-  setup() {
-    return { star, starOutline };
+defineProps({
+  modelValue: {
+    type: Number,
+    default: 0,
   },
 });
+
+defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>

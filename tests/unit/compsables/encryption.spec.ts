@@ -1,10 +1,10 @@
-import useEncryption from '@/use/encryption';
-import useVaultFactory from '@/use/vault-factory';
+import useEncryption from '@/composables/encryption';
+import useVaultFactory from '@/composables/vault-factory';
 import { DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
-import useBackendAPI from '@/use/backend-api';
+import useBackendAPI from '@/composables/backend-api';
 
-jest.mock('@/use/backend-api');
-jest.mock('@/use/vault-factory');
+jest.mock('@/composables/backend-api');
+jest.mock('@/composables/vault-factory');
 
 describe('useEncryption', () => {
   let mockVault: any;

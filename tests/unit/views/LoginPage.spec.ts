@@ -1,6 +1,6 @@
-import useAuth from '@/use/auth';
-import useSessionVault from '@/use/session-vault';
-import useSync from '@/use/sync';
+import useAuth from '@/composables/auth';
+import useSessionVault from '@/composables/session-vault';
+import useSync from '@/composables/sync';
 import LoginPage from '@/views/LoginPage.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
@@ -8,9 +8,9 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
 import waitForExpect from 'wait-for-expect';
 
-jest.mock('@/use/auth');
-jest.mock('@/use/session-vault');
-jest.mock('@/use/sync');
+jest.mock('@/composables/auth');
+jest.mock('@/composables/session-vault');
+jest.mock('@/composables/sync');
 
 describe('LoginPage.vue', () => {
   let router: Router;
@@ -87,7 +87,6 @@ describe('LoginPage.vue', () => {
         expect(opts[0].text()).toEqual('Session PIN Unlock');
         expect(opts[1].text()).toEqual('Never Lock Session');
         expect(opts[2].text()).toEqual('Force Login');
-        expect(wrapper.vm.unlockMode).toEqual('SessionPIN');
       });
 
       it('displays all options if biometrics is enabled', async () => {
@@ -101,7 +100,6 @@ describe('LoginPage.vue', () => {
         expect(opts[1].text()).toEqual('Session PIN Unlock');
         expect(opts[2].text()).toEqual('Never Lock Session');
         expect(opts[3].text()).toEqual('Force Login');
-        expect(wrapper.vm.unlockMode).toEqual('Device');
       });
     });
 
