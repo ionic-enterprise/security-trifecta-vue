@@ -17,7 +17,7 @@ const byBrandAndName = (x1: { brand: string; name: string }, x2: { brand: string
   return byBrand(x1, x2) || byName(x1, x2);
 };
 
-export default () => ({
+export const useCompare = () => ({
   byName,
   byBrandAndName,
 });

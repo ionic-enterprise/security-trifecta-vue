@@ -1,4 +1,4 @@
-import useStorage from '@/composables/storage';
+import { useStorage } from '@/composables/storage';
 import { ref, watch } from 'vue';
 
 const { getValue, setValue } = useStorage();
@@ -13,7 +13,7 @@ const load = async () => {
   prefersDarkMode.value = !!(await getValue('darkMode'));
 };
 
-export default () => ({
+export const usePreferences = () => ({
   load,
   prefersDarkMode,
 });

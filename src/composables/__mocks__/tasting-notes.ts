@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { TastingNote } from '@/models';
 
-export default jest.fn().mockReturnValue({
+export const useTastingNotes = jest.fn().mockReturnValue({
   notes: ref<Array<TastingNote>>([]),
   find: jest.fn().mockResolvedValue(undefined),
   load: jest.fn().mockResolvedValue(undefined),

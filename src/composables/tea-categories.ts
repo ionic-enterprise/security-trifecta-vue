@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { TeaCategory } from '@/models';
-import useTeaCategoriesAPI from './tea-categories-api';
-import useTeaCategoriesDatabase from './tea-categories-database';
+import { useTeaCategoriesAPI } from './tea-categories-api';
+import { useTeaCategoriesDatabase } from './tea-categories-database';
 import { isPlatform } from '@ionic/vue';
 
 const categories = ref<Array<TeaCategory>>([]);
@@ -29,7 +29,7 @@ const find = async (id: number): Promise<TeaCategory | undefined> => {
   return categories.value.find((t) => t.id === id);
 };
 
-export default (): any => ({
+export const useTeaCategories = () => ({
   categories,
   find,
   load,

@@ -1,3 +1,3 @@
-export default jest.fn().mockReturnValue({
+export const useTeaCategoriesAPI = jest.fn().mockReturnValue({
   getAll: jest.fn().mockResolvedValue([]),
 });

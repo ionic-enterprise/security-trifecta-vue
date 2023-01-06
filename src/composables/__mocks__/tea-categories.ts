@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { TeaCategory } from '@/models';
 
-export default jest.fn().mockReturnValue({
+export const useTeaCategories = jest.fn().mockReturnValue({
   categories: ref<Array<TeaCategory>>([]),
   find: jest.fn().mockResolvedValue(undefined),
   load: jest.fn().mockResolvedValue(undefined),

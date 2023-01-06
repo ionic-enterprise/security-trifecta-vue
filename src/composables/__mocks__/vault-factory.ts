@@ -25,7 +25,7 @@ const mockVault = {
   }),
 };
 
-export default jest.fn().mockReturnValue({
+export const useVaultFactory = jest.fn().mockReturnValue({
   createVault: jest.fn().mockImplementation((config: IdentityVaultConfig) => {
     mockVault.config = config;
     return mockVault;

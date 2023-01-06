@@ -1,5 +1,5 @@
-import useBackendAPI from '@/composables/backend-api';
-import useTastingNotesAPI from '@/composables/tasting-notes-api';
+import { useBackendAPI } from '@/composables/backend-api';
+import { useTastingNotesAPI } from '@/composables/tasting-notes-api';
 import { TastingNote } from '@/models';
 
 jest.mock('@/composables/backend-api');

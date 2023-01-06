@@ -1,6 +1,6 @@
-import useAuth from '@/composables/auth';
-import useSessionVault from '@/composables/session-vault';
-import useSync from '@/composables/sync';
+import { useAuth } from '@/composables/auth';
+import { useSessionVault } from '@/composables/session-vault';
+import { useSync } from '@/composables/sync';
 import LoginPage from '@/views/LoginPage.vue';
 import { Device } from '@ionic-enterprise/identity-vault';
 import { createRouter, createWebHistory } from '@ionic/vue-router';

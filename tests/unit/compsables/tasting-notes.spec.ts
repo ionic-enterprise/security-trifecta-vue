@@ -1,7 +1,7 @@
-import useSessionVault from '@/composables/session-vault';
-import useTastingNotes from '@/composables/tasting-notes';
-import useTastingNotesAPI from '@/composables/tasting-notes-api';
-import useTastingNotesDatabase from '@/composables/tasting-notes-database';
+import { useSessionVault } from '@/composables/session-vault';
+import { useTastingNotes } from '@/composables/tasting-notes';
+import { useTastingNotesAPI } from '@/composables/tasting-notes-api';
+import { useTastingNotesDatabase } from '@/composables/tasting-notes-database';
 import { TastingNote } from '@/models';
 import { isPlatform } from '@ionic/vue';
 

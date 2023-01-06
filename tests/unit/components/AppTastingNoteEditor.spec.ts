@@ -1,6 +1,6 @@
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
-import useTastingNotes from '@/composables/tasting-notes';
-import useTeaCategories from '@/composables/tea-categories';
+import { useTastingNotes } from '@/composables/tasting-notes';
+import { useTeaCategories } from '@/composables/tea-categories';
 import { modalController } from '@ionic/vue';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import waitForExpect from 'wait-for-expect';

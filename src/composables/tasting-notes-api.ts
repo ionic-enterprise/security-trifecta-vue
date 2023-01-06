@@ -1,5 +1,5 @@
-import useBackendAPI from '@/composables/backend-api';
-import useCompare from '@/composables/compare';
+import { useBackendAPI } from '@/composables/backend-api';
+import { useCompare } from '@/composables/compare';
 import { TastingNote } from '@/models';
 
 const { client } = useBackendAPI();
@@ -22,7 +22,7 @@ const remove = async (note: TastingNote): Promise<void> => {
   await client.delete(`${endpoint}/${note.id}`);
 };
 
-export default (): any => ({
+export const useTastingNotesAPI = () => ({
   getAll,
   save,
   remove,

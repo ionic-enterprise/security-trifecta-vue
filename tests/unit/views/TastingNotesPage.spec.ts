@@ -1,5 +1,5 @@
-import useAuth from '@/composables/auth';
-import useTastingNotes from '@/composables/tasting-notes';
+import { useAuth } from '@/composables/auth';
+import { useTastingNotes } from '@/composables/tasting-notes';
 import TastingNotesPage from '@/views/TastingNotesPage.vue';
 import { modalController } from '@ionic/vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';

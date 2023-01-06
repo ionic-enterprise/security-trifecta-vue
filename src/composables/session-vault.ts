@@ -1,5 +1,5 @@
 import AppPinDialog from '@/components/AppPinDialog.vue';
-import useVaultFactory from '@/composables/vault-factory';
+import { useVaultFactory } from '@/composables/vault-factory';
 import { Session } from '@/models';
 import router from '@/router';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
@@ -114,7 +114,7 @@ const clearSession = async (): Promise<void> => {
   await vault.clear();
 };
 
-export default (): any => {
+export const useSessionVault = () => {
   return {
     canUnlock,
     canUseLocking,

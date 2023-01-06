@@ -1,6 +1,6 @@
 let onLockCallback: (() => Promise<void>) | undefined;
 
-export default jest.fn().mockReturnValue({
+export const useSessionVault = jest.fn().mockReturnValue({
   canUnlock: jest.fn().mockResolvedValue(false),
   canUseLocking: jest.fn().mockReturnValue(false),
   clearSession: jest.fn().mockResolvedValue(undefined),

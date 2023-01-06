@@ -1,4 +1,4 @@
-import useDatabase from '@/composables/database';
+import { useDatabase } from '@/composables/database';
 import { TeaCategory } from '@/models';
 
 const { getHandle } = useDatabase();
@@ -59,7 +59,7 @@ const trim = async (idsToKeep: Array<number>): Promise<void> => {
   }
 };
 
-export default (): any => ({
+export const useTeaCategoriesDatabase = () => ({
   getAll,
   trim,
   upsert,

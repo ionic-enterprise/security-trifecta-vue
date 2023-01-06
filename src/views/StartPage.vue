@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { IonContent, IonPage } from '@ionic/vue';
 import { useRouter } from 'vue-router';
-import useSessionVault from '@/composables/session-vault';
+import { useSessionVault } from '@/composables/session-vault';
 
 const { canUnlock } = useSessionVault();
 const router = useRouter();

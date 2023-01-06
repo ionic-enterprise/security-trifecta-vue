@@ -79,8 +79,8 @@ import { computed } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import { object as yupObject, string as yupString, number as yupNumber } from 'yup';
 import AppRating from './AppRating.vue';
-import useTastingNotes from '@/composables/tasting-notes';
-import useTeaCategories from '@/composables/tea-categories';
+import { useTastingNotes } from '@/composables/tasting-notes';
+import { useTeaCategories } from '@/composables/tea-categories';
 import { TastingNote } from '@/models';
 
 const props = defineProps({

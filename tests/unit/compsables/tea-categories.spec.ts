@@ -1,6 +1,6 @@
-import useTeaCategories from '@/composables/tea-categories';
-import useTeaCategoriesAPI from '@/composables/tea-categories-api';
-import useTeaCategoriesDatabase from '@/composables/tea-categories-database';
+import { useTeaCategories } from '@/composables/tea-categories';
+import { useTeaCategoriesAPI } from '@/composables/tea-categories-api';
+import { useTeaCategoriesDatabase } from '@/composables/tea-categories-database';
 import { TeaCategory } from '@/models';
 import { isPlatform } from '@ionic/vue';
 

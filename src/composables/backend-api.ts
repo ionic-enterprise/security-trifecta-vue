@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import router from '@/router';
-import useSessionVault from '@/composables/session-vault';
+import { useSessionVault } from '@/composables/session-vault';
 
 const { getSession, clearSession } = useSessionVault();
 
@@ -32,7 +32,7 @@ client.interceptors.response.use(
   }
 );
 
-export default (): any => {
+export const useBackendAPI = () => {
   return {
     client,
   };

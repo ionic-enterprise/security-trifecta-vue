@@ -1,17 +1,17 @@
-import { TastingNote } from '@/models';
-import useBackendAPI from '@/composables/backend-api';
-import useCompare from '@/composables/compare';
+import { useBackendAPI } from '@/composables/backend-api';
+import { useCompare } from '@/composables/compare';
+import { TeaCategory } from '@/models';
 
 const { client } = useBackendAPI();
 
 const endpoint = '/tea-categories';
 
-const getAll = async (): Promise<Array<TastingNote>> => {
+const getAll = async (): Promise<Array<TeaCategory>> => {
   const { byName } = useCompare();
   const { data } = await client.get(endpoint);
   return data.sort(byName);
 };
 
-export default (): any => ({
+export const useTeaCategoriesAPI = () => ({
   getAll,
 });

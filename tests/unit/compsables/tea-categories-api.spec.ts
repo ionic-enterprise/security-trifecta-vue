@@ -1,5 +1,5 @@
-import useBackendAPI from '@/composables/backend-api';
-import useTeaCategoriesAPI from '@/composables/tea-categories-api';
+import { useBackendAPI } from '@/composables/backend-api';
+import { useTeaCategoriesAPI } from '@/composables/tea-categories-api';
 import { TeaCategory } from '@/models';
 
 jest.mock('@/composables/backend-api');

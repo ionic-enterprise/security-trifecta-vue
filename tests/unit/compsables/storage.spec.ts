@@ -1,5 +1,5 @@
-import useEncryption from '@/composables/encryption';
-import useStorage from '@/composables/storage';
+import { useEncryption } from '@/composables/encryption';
+import { useStorage } from '@/composables/storage';
 import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 

@@ -1,4 +1,4 @@
-import useEncryption from '@/composables/encryption';
+import { useEncryption } from '@/composables/encryption';
 import { DbTransaction, SQLite, SQLiteObject } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 
@@ -62,6 +62,6 @@ const getHandle = async (): Promise<SQLiteObject | null> => {
   return handle;
 };
 
-export default () => ({
+export const useDatabase = () => ({
   getHandle,
 });

@@ -1,7 +1,7 @@
 import { User } from '@/models';
-import useBackendAPI from '@/composables/backend-api';
-import useAuth from '@/composables/auth';
-import useSessionVault from '@/composables/session-vault';
+import { useBackendAPI } from '@/composables/backend-api';
+import { useAuth } from '@/composables/auth';
+import { useSessionVault } from '@/composables/session-vault';
 
 jest.mock('@/composables/backend-api');
 jest.mock('@/composables/session-vault');

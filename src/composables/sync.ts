@@ -1,7 +1,7 @@
-import useTastingNotes from '@/composables/tasting-notes';
-import useTastingNotesAPI from '@/composables/tasting-notes-api';
-import useTastingNotesDatabase from '@/composables/tasting-notes-database';
-import useTeaCategories from '@/composables/tea-categories';
+import { useTastingNotes } from '@/composables/tasting-notes';
+import { useTastingNotesAPI } from '@/composables/tasting-notes-api';
+import { useTastingNotesDatabase } from '@/composables/tasting-notes-database';
+import { useTeaCategories } from '@/composables/tea-categories';
 import { TastingNote } from '@/models';
 
 const syncTastingNotes = async (): Promise<void> => {
@@ -40,4 +40,4 @@ const sync = async (): Promise<void> => {
   await syncTeaCategories();
 };
 
-export default () => sync;
+export const useSync = () => sync;

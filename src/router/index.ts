@@ -1,4 +1,4 @@
-import useSessionVault from '@/composables/session-vault';
+import { useSessionVault } from '@/composables/session-vault';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from 'vue-router';
 import StartPage from '../views/StartPage.vue';

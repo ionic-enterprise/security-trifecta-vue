@@ -1,5 +1,5 @@
-import useBackendAPI from './backend-api';
-import useSessionVault from './session-vault';
+import { useBackendAPI } from './backend-api';
+import { useSessionVault } from './session-vault';
 
 const { client } = useBackendAPI();
 const { clearSession, setSession } = useSessionVault();
@@ -21,7 +21,7 @@ const logout = async (): Promise<void> => {
   await clearSession();
 };
 
-export default (): any => {
+export const useAuth = () => {
   return {
     login,
     logout,

@@ -1,5 +1,5 @@
-import usePreferences from '@/composables/preferences';
-import useStorage from '@/composables/storage';
+import { usePreferences } from '@/composables/preferences';
+import { useStorage } from '@/composables/storage';
 import { flushPromises } from '@vue/test-utils';
 
 jest.mock('@/composables/storage');

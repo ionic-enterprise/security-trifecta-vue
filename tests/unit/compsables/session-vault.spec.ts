@@ -1,6 +1,6 @@
 import { Session } from '@/models';
-import useSessionVault, { UnlockMode } from '@/composables/session-vault';
-import useVaultFactory from '@/composables/vault-factory';
+import { useSessionVault, UnlockMode } from '@/composables/session-vault';
+import { useVaultFactory } from '@/composables/vault-factory';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
 import { isPlatform } from '@ionic/vue';

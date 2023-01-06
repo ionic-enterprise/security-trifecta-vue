@@ -58,9 +58,9 @@
 </template>
 
 <script setup lang="ts">
-import useAuth from '@/composables/auth';
-import useSessionVault, { UnlockMode } from '@/composables/session-vault';
-import useSync from '@/composables/sync';
+import { useAuth } from '@/composables/auth';
+import { useSessionVault, UnlockMode } from '@/composables/session-vault';
+import { useSync } from '@/composables/sync';
 import { Device } from '@ionic-enterprise/identity-vault';
 import {
   IonButton,

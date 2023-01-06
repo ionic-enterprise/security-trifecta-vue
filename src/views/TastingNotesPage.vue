@@ -70,11 +70,11 @@ import {
 } from '@ionic/vue';
 import { add } from 'ionicons/icons';
 import AppTastingNoteEditor from '@/components/AppTastingNoteEditor.vue';
-import useTastingNotes from '@/composables/tasting-notes';
-import usePreferences from '@/composables/preferences';
+import { useTastingNotes } from '@/composables/tasting-notes';
+import { usePreferences } from '@/composables/preferences';
 import { logOutOutline, sync } from 'ionicons/icons';
-import useAuth from '@/composables/auth';
-import useSync from '@/composables/sync';
+import { useAuth } from '@/composables/auth';
+import { useSync } from '@/composables/sync';
 import { useRouter } from 'vue-router';
 
 const { prefersDarkMode } = usePreferences();

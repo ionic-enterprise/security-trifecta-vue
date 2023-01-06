@@ -1,5 +1,5 @@
-import useBackendAPI from '@/composables/backend-api';
-import useVaultFactory from '@/composables/vault-factory';
+import { useBackendAPI } from '@/composables/backend-api';
+import { useVaultFactory } from '@/composables/vault-factory';
 import { DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 
 const { createVault } = useVaultFactory();
@@ -27,6 +27,6 @@ const getDatabaseKey = async (): Promise<string | void> => {
   return key;
 };
 
-export default () => ({
+export const useEncryption = () => ({
   getDatabaseKey,
 });
