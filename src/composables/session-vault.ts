@@ -52,13 +52,13 @@ const setSession = async (s: Session): Promise<void> => {
 };
 
 const canUnlock = async (): Promise<boolean> => {
-  return isPlatform('hybrid') && (await vault.doesVaultExist()) && (await vault.isLocked());
+  return isPlatform('hybrid') && !(await vault.isEmpty()) && (await vault.isLocked());
 };
 
 const canUseLocking = (): boolean => isPlatform('hybrid');
 
 const getVaultType = async (): Promise<VaultType | undefined> => {
-  const exists = await vault.doesVaultExist();
+  const exists = !(await vault.isEmpty());
   if (exists) {
     return vault.config.type;
   }

@@ -187,17 +187,17 @@ describe('useSessionVault', () => {
 
   describe('canUnlock', () => {
     it.each([
-      [true, true, true, 'hybrid'],
-      [false, false, true, 'hybrid'],
-      [false, true, false, 'hybrid'],
-      [false, true, true, 'web'],
+      [true, false, true, 'hybrid'],
+      [false, true, true, 'hybrid'],
+      [false, false, false, 'hybrid'],
+      [false, false, true, 'web'],
     ])(
       'is %s for exists: %s locked %s on %s',
-      async (expected: boolean, exists: boolean, locked: boolean, platform: string) => {
+      async (expected: boolean, empty: boolean, locked: boolean, platform: string) => {
         (isPlatform as jest.Mock).mockImplementation((key: string) => key === platform);
         const { canUnlock } = useSessionVault();
         mockVault.isLocked.mockResolvedValue(locked);
-        mockVault.doesVaultExist.mockResolvedValue(exists);
+        mockVault.isEmpty.mockResolvedValue(empty);
         expect(await canUnlock()).toBe(expected);
       }
     );

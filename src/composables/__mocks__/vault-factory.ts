@@ -8,7 +8,7 @@ const mockVault = {
   setValue: jest.fn().mockResolvedValue(undefined),
   getValue: jest.fn().mockResolvedValue(undefined),
   updateConfig: jest.fn().mockResolvedValue(undefined),
-  doesVaultExist: jest.fn().mockResolvedValue(false),
+  isEmpty: jest.fn().mockResolvedValue(false),
   isLocked: jest.fn().mockResolvedValue(false),
   onLock: jest.fn().mockImplementation((cb: () => Promise<void>) => (onLockCallback = cb)),
   onPasscodeRequested: jest.fn().mockResolvedValue(undefined),
