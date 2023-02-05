@@ -4,8 +4,7 @@
       <ion-toolbar>
         <ion-title>Tasting Notes</ion-title>
         <ion-buttons slot="primary">
-          <ion-label>Dark</ion-label>
-          <ion-toggle v-model="prefersDarkMode"></ion-toggle>
+          <ion-toggle v-model="prefersDarkMode">Dark</ion-toggle>
           <ion-button data-testid="sync-button" @click="syncClicked">
             <ion-icon slot="icon-only" :icon="sync"></ion-icon>
           </ion-button>

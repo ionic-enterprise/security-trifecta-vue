@@ -3,4 +3,5 @@ module.exports = {
   transformIgnorePatterns: [
     '/node_modules/(?!@ionic/vue|@ionic/vue-router|@ionic/core|@stencil/core|ionicons|@ionic-enterprise|@ionic-native|@awesome-cordova-plugins|axios)',
   ],
+  setupFilesAfterEnv: ['./patchJSDom.js'],
 };

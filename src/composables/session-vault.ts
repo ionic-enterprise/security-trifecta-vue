@@ -110,8 +110,8 @@ const setUnlockMode = async (unlockMode: UnlockMode): Promise<void> => {
 
 const clearSession = async (): Promise<void> => {
   session = undefined;
-  await setUnlockMode('NeverLock');
   await vault.clear();
+  await setUnlockMode('NeverLock');
 };
 
 export const useSessionVault = () => {

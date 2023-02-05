@@ -13,18 +13,27 @@
   <ion-content>
     <ion-list>
       <ion-item>
-        <ion-label position="floating">Brand</ion-label>
-        <ion-input name="brand" v-model="brand" data-testid="brand-input"></ion-input>
+        <ion-input
+          label="Brand"
+          label-placement="floating"
+          name="brand"
+          v-model="brand"
+          data-testid="brand-input"
+        ></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Name</ion-label>
-        <ion-input name="name" v-model="name" data-testid="name-input"></ion-input>
+        <ion-input
+          label="Name"
+          label-placement="floating"
+          name="name"
+          v-model="name"
+          data-testid="name-input"
+        ></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label>Type</ion-label>
-        <ion-select name="teaCategoryId" data-testid="tea-type-select" v-model.number="teaCategoryId">
+        <ion-select label="Type" name="teaCategoryId" data-testid="tea-type-select" v-model.number="teaCategoryId">
           <ion-select-option v-for="cat of categories" :value="cat.id" :key="cat.id">{{ cat.name }}</ion-select-option>
         </ion-select>
       </ion-item>
@@ -35,8 +44,14 @@
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Notes</ion-label>
-        <ion-textarea name="notes" data-testid="notes-textbox" v-model="notes" rows="5"></ion-textarea>
+        <ion-textarea
+          label="Notes"
+          label-placement="floating"
+          name="notes"
+          data-testid="notes-textbox"
+          v-model="notes"
+          rows="5"
+        ></ion-textarea>
       </ion-item>
     </ion-list>
     <div class="error-message ion-padding" data-testid="message-area">

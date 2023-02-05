@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { InternalAxiosRequestConfig } from 'axios';
 import router from '@/router';
 import { useSessionVault } from '@/composables/session-vault';
 
@@ -14,7 +14,7 @@ const client = axios.create({
   },
 });
 
-client.interceptors.request.use(async (config: AxiosRequestConfig) => {
+client.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const session = await getSession();
   if (session && session.token && config.headers) {
     config.headers.Authorization = `Bearer ${session.token}`;
