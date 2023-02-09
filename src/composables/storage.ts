@@ -3,28 +3,29 @@ import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
 
 const storage = new KeyValueStorage();
-let initialized = false;
+let isReady: Promise<void>;
 
-const isReady = async (): Promise<boolean> => {
-  if (!initialized) {
-    const { getDatabaseKey } = useEncryption();
-    const key = isPlatform('hybrid') ? await getDatabaseKey() : '';
-    await storage.create(key || '');
-    initialized = true;
+const createDatabase = async (): Promise<void> => {
+  const { getDatabaseKey } = useEncryption();
+  const key = isPlatform('hybrid') ? await getDatabaseKey() : '';
+  await storage.create(key || '');
+};
+
+const initialize = async (): Promise<void> => {
+  if (!isReady) {
+    isReady = createDatabase();
   }
-  return initialized;
+  return isReady;
 };
 
 const getValue = async (key: string): Promise<any> => {
-  if (await isReady()) {
-    return storage.get(key);
-  }
+  await initialize();
+  return storage.get(key);
 };
 
 const setValue = async (key: string, value: any): Promise<void> => {
-  if (await isReady()) {
-    await storage.set(key, value);
-  }
+  await initialize();
+  await storage.set(key, value);
 };
 
 export const useStorage = () => ({

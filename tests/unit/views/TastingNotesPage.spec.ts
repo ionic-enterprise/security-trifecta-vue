@@ -1,4 +1,5 @@
 import { useAuth } from '@/composables/auth';
+import { usePreferences } from '@/composables/preferences';
 import { useTastingNotes } from '@/composables/tasting-notes';
 import TastingNotesPage from '@/views/TastingNotesPage.vue';
 import { modalController } from '@ionic/vue';
@@ -7,6 +8,7 @@ import { mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
 
 jest.mock('@/composables/auth');
+jest.mock('@/composables/preferences');
 jest.mock('@/composables/sync');
 jest.mock('@/composables/tasting-notes');
 jest.mock('@/composables/vault-factory');
@@ -71,6 +73,12 @@ describe('TastingNotesPage.vue', () => {
     const { refresh } = useTastingNotes();
     await mountView();
     expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('loads the preferences', async () => {
+    const { load } = usePreferences();
+    await mountView();
+    expect(load).toHaveBeenCalledTimes(1);
   });
 
   it('displays the notes', async () => {

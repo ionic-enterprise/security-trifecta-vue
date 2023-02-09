@@ -79,6 +79,7 @@ import { useRouter } from 'vue-router';
 const { prefersDarkMode } = usePreferences();
 const { notes, refresh, remove } = useTastingNotes();
 const { logout } = useAuth();
+const { load } = usePreferences();
 const router = useRouter();
 const syncDatabase = useSync();
 
@@ -102,6 +103,7 @@ const syncClicked = async () => {
   await refresh();
 };
 
+load();
 refresh();
 </script>
 
