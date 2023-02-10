@@ -93,7 +93,6 @@ const presentNoteEditor = async (evt: Event, noteId?: number) => {
     component: AppTastingNoteEditor,
     componentProps: { noteId },
     backdropDismiss: false,
-    swipeToClose: true,
   });
   modal.present();
 };
