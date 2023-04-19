@@ -1,12 +1,13 @@
 import { usePreferences } from '@/composables/preferences';
 import { useStorage } from '@/composables/storage';
 import { flushPromises } from '@vue/test-utils';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/storage');
+vi.mock('@/composables/storage');
 
 describe('usePreferences', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('prefers dark mode', () => {
@@ -28,7 +29,7 @@ describe('usePreferences', () => {
       const { getValue } = useStorage();
       const { prefersDarkMode, load } = usePreferences();
       prefersDarkMode.value = false;
-      (getValue as jest.Mock).mockResolvedValue(true);
+      (getValue as Mock).mockResolvedValue(true);
       await load();
       expect(getValue).toHaveBeenCalledTimes(1);
       expect(getValue).toHaveBeenCalledWith('darkMode');
@@ -38,7 +39,7 @@ describe('usePreferences', () => {
       const { getValue } = useStorage();
       const { prefersDarkMode, load } = usePreferences();
       prefersDarkMode.value = false;
-      (getValue as jest.Mock).mockResolvedValue(true);
+      (getValue as Mock).mockResolvedValue(true);
       await load();
       expect(prefersDarkMode.value).toEqual(true);
     });

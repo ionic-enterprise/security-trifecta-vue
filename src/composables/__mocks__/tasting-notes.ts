@@ -1,11 +1,12 @@
 import { ref } from 'vue';
 import { TastingNote } from '@/models';
+import { vi } from 'vitest';
 
-export const useTastingNotes = jest.fn().mockReturnValue({
+export const useTastingNotes = vi.fn().mockReturnValue({
   notes: ref<Array<TastingNote>>([]),
-  find: jest.fn().mockResolvedValue(undefined),
-  load: jest.fn().mockResolvedValue(undefined),
-  refresh: jest.fn().mockResolvedValue(undefined),
-  remove: jest.fn().mockResolvedValue(undefined),
-  save: jest.fn().mockResolvedValue(undefined),
+  find: vi.fn().mockResolvedValue(undefined),
+  load: vi.fn().mockResolvedValue(undefined),
+  refresh: vi.fn().mockResolvedValue(undefined),
+  remove: vi.fn().mockResolvedValue(undefined),
+  save: vi.fn().mockResolvedValue(undefined),
 });

@@ -1,16 +1,17 @@
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import AppLoginCard from '@/components/AppLoginCard.vue';
+import { useAuth } from '@/composables/auth';
 import { useSessionVault } from '@/composables/session-vault';
 import { Device } from '@ionic-enterprise/identity-vault';
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
-import { useAuth } from '@/composables/auth';
 
-jest.mock('@/composables/auth');
-jest.mock('@/composables/session-vault');
+vi.mock('@/composables/auth');
+vi.mock('@/composables/session-vault');
 
 describe('AppLoginCard.vue', () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders', () => {
@@ -22,7 +23,7 @@ describe('AppLoginCard.vue', () => {
     describe('if the app cannot use locking', () => {
       beforeEach(() => {
         const { canUseLocking } = useSessionVault();
-        (canUseLocking as jest.Mock).mockReturnValue(false);
+        (canUseLocking as Mock).mockReturnValue(false);
       });
 
       it('is not displayed', async () => {
@@ -36,7 +37,7 @@ describe('AppLoginCard.vue', () => {
     describe('if the app can use locking', () => {
       beforeEach(() => {
         const { canUseLocking } = useSessionVault();
-        (canUseLocking as jest.Mock).mockReturnValue(true);
+        (canUseLocking as Mock).mockReturnValue(true);
       });
 
       it('is displayed', async () => {
@@ -47,7 +48,7 @@ describe('AppLoginCard.vue', () => {
       });
 
       it('displays non-biometric options if biometrics is not enabled', async () => {
-        Device.isBiometricsEnabled = jest.fn().mockResolvedValue(false);
+        Device.isBiometricsEnabled = vi.fn().mockResolvedValue(false);
         const wrapper = mount(AppLoginCard);
         await flushPromises();
         const select = wrapper.find('[data-testid="unlock-opt-select"]');
@@ -60,7 +61,7 @@ describe('AppLoginCard.vue', () => {
       });
 
       it('displays all options if biometrics is enabled', async () => {
-        Device.isBiometricsEnabled = jest.fn().mockResolvedValue(true);
+        Device.isBiometricsEnabled = vi.fn().mockResolvedValue(true);
         const wrapper = mount(AppLoginCard);
         await flushPromises();
         const select = wrapper.find('[data-testid="unlock-opt-select"]');
@@ -135,7 +136,7 @@ describe('AppLoginCard.vue', () => {
   describe('clicking on the signin button', () => {
     let wrapper: VueWrapper<any>;
     beforeEach(async () => {
-      Device.isBiometricsEnabled = jest.fn().mockResolvedValue(false);
+      Device.isBiometricsEnabled = vi.fn().mockResolvedValue(false);
       wrapper = mount(AppLoginCard);
       await flushPromises();
       const email = wrapper.findComponent('[data-testid="email-input"]');
@@ -155,7 +156,7 @@ describe('AppLoginCard.vue', () => {
     describe('if the login succeeds', () => {
       beforeEach(() => {
         const { login } = useAuth();
-        (login as jest.Mock).mockResolvedValue(true);
+        (login as Mock).mockResolvedValue(true);
       });
 
       it('does not show an error', async () => {
@@ -186,7 +187,7 @@ describe('AppLoginCard.vue', () => {
     describe('if the login fails', () => {
       beforeEach(() => {
         const { login } = useAuth();
-        (login as jest.Mock).mockResolvedValue(false);
+        (login as Mock).mockResolvedValue(false);
       });
 
       it('does not show an error', async () => {

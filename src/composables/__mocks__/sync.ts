@@ -1,1 +1,3 @@
-export const useSync = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(undefined));
+import { vi } from 'vitest';
+
+export const useSync = vi.fn().mockReturnValue(vi.fn().mockResolvedValue(undefined));

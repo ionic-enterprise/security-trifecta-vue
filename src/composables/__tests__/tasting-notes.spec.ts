@@ -4,14 +4,15 @@ import { useTastingNotesAPI } from '@/composables/tasting-notes-api';
 import { useTastingNotesDatabase } from '@/composables/tasting-notes-database';
 import { TastingNote } from '@/models';
 import { isPlatform } from '@ionic/vue';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@ionic/vue', () => {
-  const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn() };
+vi.mock('@ionic/vue', async () => {
+  const actual = (await vi.importActual('@ionic/vue')) as any;
+  return { ...actual, isPlatform: vi.fn() };
 });
-jest.mock('@/composables/session-vault');
-jest.mock('@/composables/tasting-notes-api');
-jest.mock('@/composables/tasting-notes-database');
+vi.mock('@/composables/session-vault');
+vi.mock('@/composables/tasting-notes-api');
+vi.mock('@/composables/tasting-notes-database');
 
 describe('useTastingNotes', () => {
   let tastingNotes: Array<TastingNote>;
@@ -50,11 +51,11 @@ describe('useTastingNotes', () => {
     const { getAll: getAllFromDatabase } = useTastingNotesDatabase();
     const { getSession } = useSessionVault();
     initializeTestData();
-    jest.clearAllMocks();
-    (getAllFromAPI as jest.Mock).mockResolvedValue(tastingNotes);
-    (getAllFromDatabase as jest.Mock).mockResolvedValue(tastingNotes);
-    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
-    (getSession as jest.Mock).mockResolvedValue({
+    vi.clearAllMocks();
+    (getAllFromAPI as Mock).mockResolvedValue(tastingNotes);
+    (getAllFromDatabase as Mock).mockResolvedValue(tastingNotes);
+    (isPlatform as Mock).mockImplementation((key: string) => key === 'web');
+    (getSession as Mock).mockResolvedValue({
       user: {
         id: 314159,
         firstName: 'Testy',
@@ -68,7 +69,7 @@ describe('useTastingNotes', () => {
   describe('load', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('gets the tasting notes from the backend API', async () => {
@@ -111,7 +112,7 @@ describe('useTastingNotes', () => {
   describe('refresh', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('gets the tasting notes from the database', async () => {
@@ -167,7 +168,7 @@ describe('useTastingNotes', () => {
     it('finds the tasting notes from the existing tasting notes', async () => {
       const { getAll } = useTastingNotesAPI();
       await refresh();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       const t = await find(3);
       expect(t).toEqual({
         id: 3,
@@ -202,8 +203,8 @@ describe('useTastingNotes', () => {
         const { save: saveToDatabase } = useTastingNotesDatabase();
 
         beforeEach(() => {
-          (saveToDatabase as jest.Mock).mockResolvedValue({ id: 73, ...note });
-          (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+          (saveToDatabase as Mock).mockResolvedValue({ id: 73, ...note });
+          (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
         });
 
         it('saves the note to the database', async () => {
@@ -226,7 +227,7 @@ describe('useTastingNotes', () => {
       describe('on the web', () => {
         const { save: saveToBackend } = useTastingNotesAPI();
         beforeEach(() => {
-          (saveToBackend as jest.Mock).mockResolvedValue({ id: 73, ...note });
+          (saveToBackend as Mock).mockResolvedValue({ id: 73, ...note });
         });
 
         it('posts the new note', async () => {
@@ -261,8 +262,8 @@ describe('useTastingNotes', () => {
         const { save: saveToDatabase } = useTastingNotesDatabase();
 
         beforeEach(() => {
-          (saveToDatabase as jest.Mock).mockResolvedValue(note);
-          (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+          (saveToDatabase as Mock).mockResolvedValue(note);
+          (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
         });
 
         it('save the note in the database', async () => {
@@ -285,7 +286,7 @@ describe('useTastingNotes', () => {
       describe('on the web', () => {
         const { save: saveToBackend } = useTastingNotesAPI();
         beforeEach(() => {
-          (saveToBackend as jest.Mock).mockResolvedValue(note);
+          (saveToBackend as Mock).mockResolvedValue(note);
         });
 
         it('saves the existing note', async () => {
@@ -313,7 +314,7 @@ describe('useTastingNotes', () => {
 
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('marks the note for deletion', async () => {

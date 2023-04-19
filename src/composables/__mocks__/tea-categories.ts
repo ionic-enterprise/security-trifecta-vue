@@ -1,10 +1,11 @@
 import { ref } from 'vue';
 import { TeaCategory } from '@/models';
+import { vi } from 'vitest';
 
-export const useTeaCategories = jest.fn().mockReturnValue({
+export const useTeaCategories = vi.fn().mockReturnValue({
   categories: ref<Array<TeaCategory>>([]),
-  find: jest.fn().mockResolvedValue(undefined),
-  load: jest.fn().mockResolvedValue(undefined),
-  rate: jest.fn().mockResolvedValue(undefined),
-  refresh: jest.fn().mockResolvedValue(undefined),
+  find: vi.fn().mockResolvedValue(undefined),
+  load: vi.fn().mockResolvedValue(undefined),
+  rate: vi.fn().mockResolvedValue(undefined),
+  refresh: vi.fn().mockResolvedValue(undefined),
 });

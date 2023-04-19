@@ -1,8 +1,10 @@
-export const useTastingNotesDatabase = jest.fn().mockReturnValue({
-  getAll: jest.fn().mockResolvedValue([]),
-  save: jest.fn().mockResolvedValue(undefined),
-  remove: jest.fn().mockResolvedValue(undefined),
-  reset: jest.fn().mockResolvedValue(undefined),
-  trim: jest.fn().mockResolvedValue(undefined),
-  upsert: jest.fn().mockResolvedValue(undefined),
+import { vi } from 'vitest';
+
+export const useTastingNotesDatabase = vi.fn().mockReturnValue({
+  getAll: vi.fn().mockResolvedValue([]),
+  save: vi.fn().mockResolvedValue(undefined),
+  remove: vi.fn().mockResolvedValue(undefined),
+  reset: vi.fn().mockResolvedValue(undefined),
+  trim: vi.fn().mockResolvedValue(undefined),
+  upsert: vi.fn().mockResolvedValue(undefined),
 });

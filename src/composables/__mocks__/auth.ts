@@ -1,4 +1,6 @@
-export const useAuth = jest.fn().mockReturnValue({
-  login: jest.fn().mockResolvedValue(false),
-  logout: jest.fn().mockResolvedValue(undefined),
+import { vi } from 'vitest';
+
+export const useAuth = vi.fn().mockReturnValue({
+  login: vi.fn().mockResolvedValue(false),
+  logout: vi.fn().mockResolvedValue(undefined),
 });

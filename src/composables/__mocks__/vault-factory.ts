@@ -1,32 +1,33 @@
 import { IdentityVaultConfig } from '@ionic-enterprise/identity-vault';
+import { vi } from 'vitest';
 let onLockCallback: undefined | (() => Promise<void>);
 let onUnlockCallback: undefined | (() => Promise<void>);
 
 const mockVault = {
   config: undefined as IdentityVaultConfig | undefined,
-  clear: jest.fn().mockResolvedValue(undefined),
-  setValue: jest.fn().mockResolvedValue(undefined),
-  getValue: jest.fn().mockResolvedValue(undefined),
-  updateConfig: jest.fn().mockResolvedValue(undefined),
-  isEmpty: jest.fn().mockResolvedValue(false),
-  isLocked: jest.fn().mockResolvedValue(false),
-  onLock: jest.fn().mockImplementation((cb: () => Promise<void>) => (onLockCallback = cb)),
-  onPasscodeRequested: jest.fn().mockResolvedValue(undefined),
-  onUnlock: jest.fn().mockImplementation((cb: () => Promise<void>) => (onUnlockCallback = cb)),
-  lock: jest.fn().mockImplementation(() => {
+  clear: vi.fn().mockResolvedValue(undefined),
+  setValue: vi.fn().mockResolvedValue(undefined),
+  getValue: vi.fn().mockResolvedValue(undefined),
+  updateConfig: vi.fn().mockResolvedValue(undefined),
+  isEmpty: vi.fn().mockResolvedValue(false),
+  isLocked: vi.fn().mockResolvedValue(false),
+  onLock: vi.fn().mockImplementation((cb: () => Promise<void>) => (onLockCallback = cb)),
+  onPasscodeRequested: vi.fn().mockResolvedValue(undefined),
+  onUnlock: vi.fn().mockImplementation((cb: () => Promise<void>) => (onUnlockCallback = cb)),
+  lock: vi.fn().mockImplementation(() => {
     if (onLockCallback) {
       onLockCallback();
     }
   }),
-  unlock: jest.fn().mockImplementation(() => {
+  unlock: vi.fn().mockImplementation(() => {
     if (onUnlockCallback) {
       onUnlockCallback();
     }
   }),
 };
 
-export const useVaultFactory = jest.fn().mockReturnValue({
-  createVault: jest.fn().mockImplementation((config: IdentityVaultConfig) => {
+export const useVaultFactory = vi.fn().mockReturnValue({
+  createVault: vi.fn().mockImplementation((config: IdentityVaultConfig) => {
     mockVault.config = config;
     return mockVault;
   }),

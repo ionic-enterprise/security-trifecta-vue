@@ -1,3 +1,5 @@
-export const useEncryption = jest.fn().mockReturnValue({
-  getDatabaseKey: jest.fn().mockResolvedValue(undefined),
+import { vi } from 'vitest';
+
+export const useEncryption = vi.fn().mockReturnValue({
+  getDatabaseKey: vi.fn().mockResolvedValue(undefined),
 });

@@ -1,8 +1,9 @@
 import { useBackendAPI } from '@/composables/backend-api';
 import { useTastingNotesAPI } from '@/composables/tasting-notes-api';
 import { TastingNote } from '@/models';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/backend-api');
+vi.mock('@/composables/backend-api');
 
 describe('useTastingNotes', () => {
   const { client } = useBackendAPI();
@@ -39,8 +40,8 @@ describe('useTastingNotes', () => {
 
   beforeEach(() => {
     initializeTestData();
-    jest.clearAllMocks();
-    (client.get as jest.Mock).mockResolvedValue({ data: tastingNotes });
+    vi.clearAllMocks();
+    (client.get as Mock).mockResolvedValue({ data: tastingNotes });
   });
 
   describe('get all', () => {
@@ -70,7 +71,7 @@ describe('useTastingNotes', () => {
       };
 
       beforeEach(() => {
-        (client.post as jest.Mock).mockResolvedValue({ data: { id: 73, ...note } });
+        (client.post as Mock).mockResolvedValue({ data: { id: 73, ...note } });
       });
 
       it('posts the new note', async () => {
@@ -95,7 +96,7 @@ describe('useTastingNotes', () => {
       };
 
       beforeEach(() => {
-        (client.post as jest.Mock).mockResolvedValue({ data: note });
+        (client.post as Mock).mockResolvedValue({ data: note });
       });
 
       it('posts the existing note', async () => {

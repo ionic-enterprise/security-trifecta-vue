@@ -1,3 +1,5 @@
-export const useTeaCategoriesAPI = jest.fn().mockReturnValue({
-  getAll: jest.fn().mockResolvedValue([]),
+import { vi } from 'vitest';
+
+export const useTeaCategoriesAPI = vi.fn().mockReturnValue({
+  getAll: vi.fn().mockResolvedValue([]),
 });

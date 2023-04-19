@@ -1,10 +1,11 @@
+import { useBackendAPI } from '@/composables/backend-api';
 import { useEncryption } from '@/composables/encryption';
 import { useVaultFactory } from '@/composables/vault-factory';
 import { DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
-import { useBackendAPI } from '@/composables/backend-api';
+import { Mock, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/backend-api');
-jest.mock('@/composables/vault-factory');
+vi.mock('@/composables/backend-api');
+vi.mock('@/composables/vault-factory');
 
 describe('useEncryption', () => {
   let mockVault: any;
@@ -17,7 +18,7 @@ describe('useEncryption', () => {
       deviceSecurityType: DeviceSecurityType.None,
       unlockVaultOnLoad: false,
     });
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getDatabaseKey', () => {
@@ -25,7 +26,7 @@ describe('useEncryption', () => {
     const { getDatabaseKey } = useEncryption();
 
     beforeEach(() => {
-      (client.get as jest.Mock).mockResolvedValue({ data: { storage: 'fiir99502939kd0-9304' } });
+      (client.get as Mock).mockResolvedValue({ data: { storage: 'fiir99502939kd0-9304' } });
     });
 
     it('checks the vault', async () => {

@@ -1,5 +1,7 @@
-export const useTeaCategoriesDatabase = jest.fn().mockReturnValue({
-  getAll: jest.fn().mockResolvedValue([]),
-  trim: jest.fn().mockResolvedValue(undefined),
-  upsert: jest.fn().mockResolvedValue(undefined),
+import { vi } from 'vitest';
+
+export const useTeaCategoriesDatabase = vi.fn().mockReturnValue({
+  getAll: vi.fn().mockResolvedValue([]),
+  trim: vi.fn().mockResolvedValue(undefined),
+  upsert: vi.fn().mockResolvedValue(undefined),
 });

@@ -1,21 +1,22 @@
-import { User } from '@/models';
-import { useBackendAPI } from '@/composables/backend-api';
 import { useAuth } from '@/composables/auth';
+import { useBackendAPI } from '@/composables/backend-api';
 import { useSessionVault } from '@/composables/session-vault';
+import { User } from '@/models';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/backend-api');
-jest.mock('@/composables/session-vault');
+vi.mock('@/composables/backend-api');
+vi.mock('@/composables/session-vault');
 
 describe('useAuth', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('login', () => {
     const { login } = useAuth();
     const { client } = useBackendAPI();
     beforeEach(() => {
-      (client.post as jest.Mock).mockResolvedValue({
+      (client.post as Mock).mockResolvedValue({
         data: { success: false },
       });
     });
@@ -42,7 +43,7 @@ describe('useAuth', () => {
           lastName: 'McTest',
           email: 'test@test.com',
         };
-        (client.post as jest.Mock).mockResolvedValue({
+        (client.post as Mock).mockResolvedValue({
           data: {
             success: true,
             user,

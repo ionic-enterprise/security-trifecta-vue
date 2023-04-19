@@ -50,7 +50,7 @@
           name="notes"
           data-testid="notes-textbox"
           v-model="notes"
-          rows="5"
+          :rows="5"
         ></ion-textarea>
       </ion-item>
     </ion-list>
@@ -113,11 +113,11 @@ const validationSchema = yupObject({
 });
 
 const { errors, meta } = useForm({ validationSchema });
-const { value: brand } = useField('brand');
-const { value: name } = useField('name');
-const { value: notes } = useField('notes');
-const { value: teaCategoryId } = useField('teaCategoryId');
-const { value: rating } = useField('rating');
+const { value: brand } = useField<string>('brand');
+const { value: name } = useField<string>('name');
+const { value: notes } = useField<string>('notes');
+const { value: teaCategoryId } = useField<number>('teaCategoryId');
+const { value: rating } = useField<number>('rating');
 
 const buttonLabel = computed(() => (props.noteId ? 'Update' : 'Add'));
 const title = computed(() => `${props.noteId ? '' : 'Add New '}Tasting Note`);

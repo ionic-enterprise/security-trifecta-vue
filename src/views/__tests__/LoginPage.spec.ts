@@ -4,9 +4,10 @@ import LoginPage from '@/views/LoginPage.vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { Router } from 'vue-router';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/session-vault');
-jest.mock('@/composables/sync');
+vi.mock('@/composables/session-vault');
+vi.mock('@/composables/sync');
 
 describe('LoginPage.vue', () => {
   let router: Router;
@@ -18,21 +19,23 @@ describe('LoginPage.vue', () => {
     });
     router.push('/');
     await router.isReady();
-    return mount(LoginPage, {
+    const wrapper = mount(LoginPage, {
       global: {
         plugins: [router],
       },
     });
+    await flushPromises();
+    return wrapper;
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('without a session that can be unlocked', () => {
     beforeEach(() => {
       const { canUnlock } = useSessionVault();
-      (canUnlock as jest.Mock).mockResolvedValue(false);
+      (canUnlock as Mock).mockResolvedValue(false);
     });
 
     it('displays the login card', async () => {
@@ -56,7 +59,7 @@ describe('LoginPage.vue', () => {
       it('redirects to the main route', async () => {
         const wrapper = await mountView();
         const loginCard = wrapper.findComponent('[data-testid="login-card"]') as VueWrapper;
-        router.replace = jest.fn();
+        router.replace = vi.fn();
         loginCard.vm.$emit('success');
         await flushPromises();
         expect(router.replace).toHaveReturnedTimes(1);
@@ -68,7 +71,7 @@ describe('LoginPage.vue', () => {
   describe('with a session that can be unlocked', () => {
     beforeEach(() => {
       const { canUnlock } = useSessionVault();
-      (canUnlock as jest.Mock).mockResolvedValue(true);
+      (canUnlock as Mock).mockResolvedValue(true);
     });
 
     it('displays the unlock card', async () => {
@@ -83,7 +86,7 @@ describe('LoginPage.vue', () => {
       it('navigates to the main route', async () => {
         const wrapper = await mountView();
         const unlockCard = wrapper.findComponent('[data-testid="unlock-card"]') as VueWrapper;
-        router.replace = jest.fn();
+        router.replace = vi.fn();
         unlockCard.vm.$emit('unlocked');
         await flushPromises();
         expect(router.replace).toHaveReturnedTimes(1);

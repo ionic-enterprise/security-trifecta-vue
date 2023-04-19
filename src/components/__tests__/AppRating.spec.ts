@@ -1,6 +1,7 @@
 import { mount, VueWrapper } from '@vue/test-utils';
 import AppRating from '@/components/AppRating.vue';
 import { star, starOutline } from 'ionicons/icons';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 describe('AppRating.vue', () => {
   let wrapper: VueWrapper<any>;

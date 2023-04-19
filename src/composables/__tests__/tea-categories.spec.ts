@@ -3,13 +3,14 @@ import { useTeaCategoriesAPI } from '@/composables/tea-categories-api';
 import { useTeaCategoriesDatabase } from '@/composables/tea-categories-database';
 import { TeaCategory } from '@/models';
 import { isPlatform } from '@ionic/vue';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@ionic/vue', () => {
-  const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn() };
+vi.mock('@ionic/vue', async () => {
+  const actual = (await vi.importActual('@ionic/vue')) as any;
+  return { ...actual, isPlatform: vi.fn() };
 });
-jest.mock('@/composables/tea-categories-api');
-jest.mock('@/composables/tea-categories-database');
+vi.mock('@/composables/tea-categories-api');
+vi.mock('@/composables/tea-categories-database');
 
 describe('useTeaCategories', () => {
   let teaCategories: Array<TeaCategory>;
@@ -63,16 +64,16 @@ describe('useTeaCategories', () => {
     const { getAll: getAllFromAPI } = useTeaCategoriesAPI();
     const { getAll: getAllFromDatabase } = useTeaCategoriesDatabase();
     initializeTestData();
-    jest.clearAllMocks();
-    (getAllFromAPI as jest.Mock).mockResolvedValue(teaCategories);
-    (getAllFromDatabase as jest.Mock).mockResolvedValue(teaCategories);
-    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
+    vi.clearAllMocks();
+    (getAllFromAPI as Mock).mockResolvedValue(teaCategories);
+    (getAllFromDatabase as Mock).mockResolvedValue(teaCategories);
+    (isPlatform as Mock).mockImplementation((key: string) => key === 'web');
   });
 
   describe('load', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('gets the tea categories', async () => {
@@ -115,7 +116,7 @@ describe('useTeaCategories', () => {
   describe('refresh', () => {
     describe('on mobile', () => {
       beforeEach(() => {
-        (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+        (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
       });
 
       it('gets the tea categories from the database', async () => {
@@ -168,7 +169,7 @@ describe('useTeaCategories', () => {
     it('finds the tea from the existing teas', async () => {
       const { getAll } = useTeaCategoriesAPI();
       await refresh();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       const t = await find(4);
       expect(t).toEqual({
         id: 4,

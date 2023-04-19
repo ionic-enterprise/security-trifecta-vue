@@ -1,8 +1,9 @@
 import { useBackendAPI } from '@/composables/backend-api';
 import { useTeaCategoriesAPI } from '@/composables/tea-categories-api';
 import { TeaCategory } from '@/models';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/backend-api');
+vi.mock('@/composables/backend-api');
 
 describe('useTeaCategories', () => {
   const { client } = useBackendAPI();
@@ -55,8 +56,8 @@ describe('useTeaCategories', () => {
 
   beforeEach(() => {
     initializeTestData();
-    jest.clearAllMocks();
-    (client.get as jest.Mock).mockResolvedValue({ data: teaCategories });
+    vi.clearAllMocks();
+    (client.get as Mock).mockResolvedValue({ data: teaCategories });
   });
 
   describe('getAll', () => {

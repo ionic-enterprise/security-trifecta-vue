@@ -1,8 +1,8 @@
 import { useEncryption } from '@/composables/encryption';
-import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
+import { useKeyValueStorage } from './key-value-storage';
 
-const storage = new KeyValueStorage();
+const storage = useKeyValueStorage();
 let isReady: Promise<void>;
 
 const createDatabase = async (): Promise<void> => {

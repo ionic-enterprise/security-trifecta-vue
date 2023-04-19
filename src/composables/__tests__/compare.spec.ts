@@ -1,4 +1,5 @@
 import { useCompare } from '@/composables/compare';
+import { describe, expect, it } from 'vitest';
 
 describe('compare', () => {
   describe('by name', () => {

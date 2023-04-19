@@ -1,7 +1,9 @@
-export const useBackendAPI = jest.fn().mockReturnValue({
+import { vi } from 'vitest';
+
+export const useBackendAPI = vi.fn().mockReturnValue({
   client: {
-    delete: jest.fn().mockResolvedValue({ data: null }),
-    get: jest.fn().mockResolvedValue({ data: null }),
-    post: jest.fn().mockResolvedValue({ data: null }),
+    delete: vi.fn().mockResolvedValue({ data: null }),
+    get: vi.fn().mockResolvedValue({ data: null }),
+    post: vi.fn().mockResolvedValue({ data: null }),
   },
 });

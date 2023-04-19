@@ -3,10 +3,11 @@ import { useTastingNotes } from '@/composables/tasting-notes';
 import { useTeaCategories } from '@/composables/tea-categories';
 import { modalController } from '@ionic/vue';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 
-jest.mock('@/composables/tasting-notes');
-jest.mock('@/composables/tea-categories');
+vi.mock('@/composables/tasting-notes');
+vi.mock('@/composables/tea-categories');
 
 describe('AppTastingNoteEditor.vue', () => {
   let wrapper: VueWrapper<any>;
@@ -37,7 +38,7 @@ describe('AppTastingNoteEditor.vue', () => {
       },
     ];
     wrapper = mount(AppTastingNoteEditor);
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders', () => {
@@ -108,7 +109,7 @@ describe('AppTastingNoteEditor.vue', () => {
 
   it('populates the data when editing a note', async () => {
     const { find } = useTastingNotes();
-    (find as jest.Mock).mockResolvedValue({
+    (find as Mock).mockResolvedValue({
       id: 73,
       brand: 'Rishi',
       name: 'Puer Cake',
@@ -138,7 +139,7 @@ describe('AppTastingNoteEditor.vue', () => {
 
   describe('submit button', () => {
     beforeEach(() => {
-      modalController.dismiss = jest.fn().mockResolvedValue(undefined);
+      modalController.dismiss = vi.fn().mockResolvedValue(undefined);
     });
 
     it('displays an appropriate title', async () => {

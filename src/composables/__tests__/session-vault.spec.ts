@@ -4,13 +4,19 @@ import { useVaultFactory } from '@/composables/vault-factory';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import router from '@/router';
 import { isPlatform } from '@ionic/vue';
+import { Mock, vi } from 'vitest';
 
-jest.mock('@ionic/vue', () => {
-  const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn().mockReturnValue(true) };
+vi.mock('@/router', () => ({
+  default: {
+    replace: vi.fn(),
+  },
+}));
+vi.mock('@ionic/vue', async () => {
+  const actual = (await vi.importActual('@ionic/vue')) as any;
+  return { ...actual, isPlatform: vi.fn().mockReturnValue(true) };
 });
-jest.mock('@/composables/vault-factory');
-jest.mock('@/router');
+vi.mock('@/composables/vault-factory');
+vi.mock('@/router');
 
 describe('useSessionVault', () => {
   let mockVault: any;
@@ -35,8 +41,8 @@ describe('useSessionVault', () => {
       customPasscodeInvalidUnlockAttempts: 2,
       unlockVaultOnLoad: false,
     });
-    jest.clearAllMocks();
-    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+    vi.clearAllMocks();
+    (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
   });
 
   it('starts with an undefined session', async () => {
@@ -98,7 +104,7 @@ describe('useSessionVault', () => {
 
     it('gets the session from the vault', async () => {
       const { getSession } = useSessionVault();
-      (mockVault.getValue as jest.Mock).mockResolvedValue(testSession);
+      (mockVault.getValue as Mock).mockResolvedValue(testSession);
       expect(await getSession()).toEqual(testSession);
       expect(mockVault.getValue).toHaveBeenCalledTimes(1);
       expect(mockVault.getValue).toHaveBeenCalledWith('session');
@@ -106,7 +112,7 @@ describe('useSessionVault', () => {
 
     it('caches the retrieved session', async () => {
       const { getSession } = useSessionVault();
-      (mockVault.getValue as jest.Mock).mockResolvedValue(testSession);
+      (mockVault.getValue as Mock).mockResolvedValue(testSession);
       await getSession();
       await getSession();
       expect(mockVault.getValue).toHaveBeenCalledTimes(1);
@@ -143,8 +149,8 @@ describe('useSessionVault', () => {
 
     describe('device mode', () => {
       it('provisions the FaceID permissions if needed', async () => {
-        Device.isBiometricsAllowed = jest.fn(() => Promise.resolve(BiometricPermissionState.Prompt));
-        Device.showBiometricPrompt = jest.fn(() => Promise.resolve());
+        Device.isBiometricsAllowed = vi.fn(() => Promise.resolve(BiometricPermissionState.Prompt));
+        Device.showBiometricPrompt = vi.fn(() => Promise.resolve());
         const { setUnlockMode } = useSessionVault();
         await setUnlockMode('Device');
         expect(Device.showBiometricPrompt).toHaveBeenCalledTimes(1);
@@ -154,16 +160,16 @@ describe('useSessionVault', () => {
       });
 
       it('does not provision the FaceID permissions if permissions have already been granted', async () => {
-        Device.isBiometricsAllowed = jest.fn(() => Promise.resolve(BiometricPermissionState.Granted));
-        Device.showBiometricPrompt = jest.fn(() => Promise.resolve());
+        Device.isBiometricsAllowed = vi.fn(() => Promise.resolve(BiometricPermissionState.Granted));
+        Device.showBiometricPrompt = vi.fn(() => Promise.resolve());
         const { setUnlockMode } = useSessionVault();
         await setUnlockMode('Device');
         expect(Device.showBiometricPrompt).not.toHaveBeenCalled();
       });
 
       it('does not provision the FaceID permissions if permissions have already been denied', async () => {
-        Device.isBiometricsAllowed = jest.fn(() => Promise.resolve(BiometricPermissionState.Denied));
-        Device.showBiometricPrompt = jest.fn(() => Promise.resolve());
+        Device.isBiometricsAllowed = vi.fn(() => Promise.resolve(BiometricPermissionState.Denied));
+        Device.showBiometricPrompt = vi.fn(() => Promise.resolve());
         const { setUnlockMode } = useSessionVault();
         await setUnlockMode('Device');
         expect(Device.showBiometricPrompt).not.toHaveBeenCalled();
@@ -173,13 +179,13 @@ describe('useSessionVault', () => {
 
   describe('canUseLocking', () => {
     it('is false for web', () => {
-      (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
+      (isPlatform as Mock).mockImplementation((key: string) => key === 'web');
       const { canUseLocking } = useSessionVault();
       expect(canUseLocking()).toBe(false);
     });
 
     it('is true for hybrid', () => {
-      (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+      (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
       const { canUseLocking } = useSessionVault();
       expect(canUseLocking()).toBe(true);
     });
@@ -194,7 +200,7 @@ describe('useSessionVault', () => {
     ])(
       'is %s for exists: %s locked %s on %s',
       async (expected: boolean, empty: boolean, locked: boolean, platform: string) => {
-        (isPlatform as jest.Mock).mockImplementation((key: string) => key === platform);
+        (isPlatform as Mock).mockImplementation((key: string) => key === platform);
         const { canUnlock } = useSessionVault();
         mockVault.isLocked.mockResolvedValue(locked);
         mockVault.isEmpty.mockResolvedValue(empty);
@@ -207,7 +213,7 @@ describe('useSessionVault', () => {
     beforeEach(async () => {
       const { setSession } = useSessionVault();
       await setSession(testSession);
-      (mockVault.getValue as jest.Mock).mockResolvedValue(undefined);
+      (mockVault.getValue as Mock).mockResolvedValue(undefined);
     });
 
     it('clears the session cache', async () => {

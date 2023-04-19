@@ -2,43 +2,34 @@ import { useEncryption } from '@/composables/encryption';
 import { useStorage } from '@/composables/storage';
 import { KeyValueStorage } from '@ionic-enterprise/secure-storage';
 import { isPlatform } from '@ionic/vue';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useKeyValueStorage } from '@/composables/key-value-storage';
 
-jest.mock('@ionic/vue', () => {
-  const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn().mockReturnValue(true) };
+vi.mock('@ionic/vue', async () => {
+  const actual = (await vi.importActual('@ionic/vue')) as any;
+  return { ...actual, isPlatform: vi.fn().mockReturnValue(true) };
 });
-jest.mock('@/composables/encryption');
-jest.mock('@/composables/vault-factory');
-jest.mock('@ionic-enterprise/secure-storage', () => {
-  const actual = jest.requireActual('@ionic-enterprise/secure-storage');
-  const mockKeyValueStorage = {
-    create: jest.fn().mockResolvedValue(undefined),
-    set: jest.fn().mockResolvedValue(undefined),
-    get: jest.fn().mockResolvedValue('foo'),
-  };
-  return {
-    ...actual,
-    KeyValueStorage: jest.fn(() => mockKeyValueStorage),
-  };
-});
+vi.mock('@/composables/encryption');
+vi.mock('@/composables/key-value-storage');
+vi.mock('@/composables/vault-factory');
 
 describe('useStorage', () => {
   let store: KeyValueStorage;
   beforeAll(() => {
     useStorage();
-    store = new KeyValueStorage();
+    store = useKeyValueStorage();
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'web');
+    vi.clearAllMocks();
+    (isPlatform as Mock).mockImplementation((key: string) => key === 'web');
   });
 
   it('creates the storage on the first call', async () => {
     const { setValue } = useStorage();
     const { getDatabaseKey } = useEncryption();
-    (getDatabaseKey as jest.Mock).mockResolvedValue('foo-bar-key');
-    (isPlatform as jest.Mock).mockImplementation((key: string) => key === 'hybrid');
+    (getDatabaseKey as Mock).mockResolvedValue('foo-bar-key');
+    (isPlatform as Mock).mockImplementation((key: string) => key === 'hybrid');
     expect(store.create).not.toHaveBeenCalled();
     await setValue('some-key', false);
     expect(store.create).toHaveBeenCalledTimes(1);
@@ -66,7 +57,7 @@ describe('useStorage', () => {
 
     it('returns the value', async () => {
       const { getValue } = useStorage();
-      (store.get as jest.Mock).mockResolvedValue(427349);
+      (store.get as Mock).mockResolvedValue(427349);
       expect(await getValue('some-key')).toEqual(427349);
     });
   });

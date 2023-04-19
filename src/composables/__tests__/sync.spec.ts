@@ -1,19 +1,20 @@
-import { TastingNote } from '@/models';
 import { useSync } from '@/composables/sync';
-import { useTeaCategories } from '@/composables/tea-categories';
 import { useTastingNotes } from '@/composables/tasting-notes';
 import { useTastingNotesAPI } from '@/composables/tasting-notes-api';
 import { useTastingNotesDatabase } from '@/composables/tasting-notes-database';
+import { useTeaCategories } from '@/composables/tea-categories';
+import { TastingNote } from '@/models';
+import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@ionic/vue', () => {
-  const actual = jest.requireActual('@ionic/vue');
-  return { ...actual, isPlatform: jest.fn() };
+vi.mock('@ionic/vue', async () => {
+  const actual = (await vi.importActual('@ionic/vue')) as any;
+  return { ...actual, isPlatform: vi.fn() };
 });
-jest.mock('@/composables/database');
-jest.mock('@/composables/tasting-notes');
-jest.mock('@/composables/tasting-notes-api');
-jest.mock('@/composables/tasting-notes-database');
-jest.mock('@/composables/tea-categories');
+vi.mock('@/composables/database');
+vi.mock('@/composables/tasting-notes');
+vi.mock('@/composables/tasting-notes-api');
+vi.mock('@/composables/tasting-notes-database');
+vi.mock('@/composables/tea-categories');
 
 describe('useSync', () => {
   let tastingNotes: Array<TastingNote>;
@@ -107,8 +108,8 @@ describe('useSync', () => {
   beforeEach(() => {
     const { getAll } = useTastingNotesDatabase();
     initializeTestData();
-    jest.clearAllMocks();
-    (getAll as jest.Mock).mockResolvedValue(tastingNotes);
+    vi.clearAllMocks();
+    (getAll as Mock).mockResolvedValue(tastingNotes);
   });
 
   it('gets the notes for the current user from the database, including deleted notes', async () => {

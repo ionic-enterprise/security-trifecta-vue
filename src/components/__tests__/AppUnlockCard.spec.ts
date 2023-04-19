@@ -1,12 +1,13 @@
-import { flushPromises, mount } from '@vue/test-utils';
 import AppUnlockCard from '@/components/AppUnlockCard.vue';
 import { useSessionVault } from '@/composables/session-vault';
+import { flushPromises, mount } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@/composables/session-vault');
+vi.mock('@/composables/session-vault');
 
 describe('AppUnlockCard.vue', () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders', () => {

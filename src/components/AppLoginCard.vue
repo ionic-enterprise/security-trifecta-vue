@@ -122,8 +122,8 @@ const validationSchema = yupObject({
 });
 
 const { errors, meta } = useForm({ validationSchema });
-const { value: email } = useField('email');
-const { value: password } = useField('password');
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
 
 const signinClicked = async () => {
   if (await login(email.value as string, password.value as string)) {
