@@ -1,4 +1,4 @@
-package io.ionic.csdemosecurestoragevue;
+package io.ionic.securitytrifectavue;
 
 import com.getcapacitor.BridgeActivity;
 

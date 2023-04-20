@@ -1,14 +1,14 @@
 import AppPinDialog from '@/components/AppPinDialog.vue';
 import { useVaultFactory } from '@/composables/vault-factory';
-import { Session } from '@/models';
 import router from '@/router';
+import { AuthResult } from '@ionic-enterprise/auth';
 import { BiometricPermissionState, Device, DeviceSecurityType, VaultType } from '@ionic-enterprise/identity-vault';
 import { isPlatform, modalController } from '@ionic/vue';
 
 export type UnlockMode = 'Device' | 'SessionPIN' | 'NeverLock' | 'ForceLogin';
 
 const key = 'session';
-let session: Session | null | undefined;
+let session: AuthResult | null | undefined;
 
 const { createVault } = useVaultFactory();
 const vault = createVault({
@@ -39,14 +39,14 @@ vault.onPasscodeRequested(async (isPasscodeSetRequest: boolean) => {
   vault.setCustomPasscode(data || '');
 });
 
-const getSession = async (): Promise<Session | null | undefined> => {
+const getSession = async (): Promise<AuthResult | null | undefined> => {
   if (!session) {
     session = await vault.getValue(key);
   }
   return session;
 };
 
-const setSession = async (s: Session): Promise<void> => {
+const setSession = async (s: AuthResult): Promise<void> => {
   session = s;
   return vault.setValue(key, s);
 };

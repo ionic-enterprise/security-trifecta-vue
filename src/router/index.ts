@@ -1,9 +1,7 @@
-import { useSessionVault } from '@/composables/session-vault';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from 'vue-router';
 import StartPage from '../views/StartPage.vue';
-
-const { getSession } = useSessionVault();
+import { useAuth } from '@/composables/auth';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -27,8 +25,8 @@ const checkAuthStatus = async (
   next: NavigationGuardNext
 ) => {
   if (to.matched.some((r) => r.meta.requiresAuth)) {
-    const session = await getSession();
-    if (!session) {
+    const { isAuthenticated } = useAuth();
+    if (!(await isAuthenticated())) {
       return next('/login');
     }
   }

@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.csdemosecurestoragevue',
-  appName: 'Secure Storage Vue',
+  appId: 'io.ionic.securitytrifectavue',
+  appName: 'Security Trifecta Vue',
   webDir: 'dist',
   bundledWebRuntime: false,
   plugins: {

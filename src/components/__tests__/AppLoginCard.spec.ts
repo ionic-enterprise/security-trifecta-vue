@@ -76,73 +76,12 @@ describe('AppLoginCard.vue', () => {
     });
   });
 
-  it('displays messages as the user enters invalid data', async () => {
-    const wrapper = mount(AppLoginCard);
-    await flushPromises();
-    const email = wrapper.findComponent('[data-testid="email-input"]');
-    const password = wrapper.findComponent('[data-testid="password-input"]');
-    const msg = wrapper.find('[data-testid="message-area"]');
-
-    expect(msg.text()).toBe('');
-
-    await email.setValue('foobar');
-    await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe('Email Address must be a valid email'));
-
-    await email.setValue('');
-    await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe('Email Address is a required field'));
-
-    await email.setValue('foobar@baz.com');
-    await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe(''));
-
-    await password.setValue('mypassword');
-    await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe(''));
-
-    await password.setValue('');
-    await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe('Password is a required field'));
-
-    await password.setValue('mypassword');
-    await flushPromises();
-    await waitForExpect(() => expect(msg.text()).toBe(''));
-  });
-
-  it('has a disabled signin button until valid data is entered', async () => {
-    const wrapper = mount(AppLoginCard);
-    await flushPromises();
-    const button = wrapper.find('[data-testid="signin-button"]');
-    const email = wrapper.findComponent('[data-testid="email-input"]');
-    const password = wrapper.findComponent('[data-testid="password-input"]');
-
-    await flushPromises();
-    await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(true));
-
-    await email.setValue('foobar');
-    await flushPromises();
-    await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(true));
-
-    await password.setValue('mypassword');
-    await flushPromises();
-    await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(true));
-
-    await email.setValue('foobar@baz.com');
-    await flushPromises();
-    await waitForExpect(() => expect((button.element as HTMLIonButtonElement).disabled).toBe(false));
-  });
-
   describe('clicking on the signin button', () => {
     let wrapper: VueWrapper<any>;
     beforeEach(async () => {
       Device.isBiometricsEnabled = vi.fn().mockResolvedValue(false);
       wrapper = mount(AppLoginCard);
       await flushPromises();
-      const email = wrapper.findComponent('[data-testid="email-input"]');
-      const password = wrapper.findComponent('[data-testid="password-input"]');
-      await email.setValue('test@test.com');
-      await password.setValue('test');
     });
 
     it('performs the login', async () => {
@@ -150,21 +89,12 @@ describe('AppLoginCard.vue', () => {
       const button = wrapper.find('[data-testid="signin-button"]');
       await button.trigger('click');
       expect(login).toHaveBeenCalledTimes(1);
-      expect(login).toHaveBeenCalledWith('test@test.com', 'test');
     });
 
     describe('if the login succeeds', () => {
       beforeEach(() => {
         const { login } = useAuth();
-        (login as Mock).mockResolvedValue(true);
-      });
-
-      it('does not show an error', async () => {
-        const button = wrapper.find('[data-testid="signin-button"]');
-        const msg = wrapper.find('[data-testid="message-area"]');
-        await button.trigger('click');
-        await flushPromises();
-        expect(msg.text()).toBe('');
+        (login as Mock).mockResolvedValue(undefined);
       });
 
       it('sets the desired unlock mode', async () => {
@@ -187,15 +117,7 @@ describe('AppLoginCard.vue', () => {
     describe('if the login fails', () => {
       beforeEach(() => {
         const { login } = useAuth();
-        (login as Mock).mockResolvedValue(false);
-      });
-
-      it('does not show an error', async () => {
-        const button = wrapper.find('[data-testid="signin-button"]');
-        const msg = wrapper.find('[data-testid="message-area"]');
-        button.trigger('click');
-        await flushPromises();
-        expect(msg.text()).toBe('Invalid email and/or password');
+        (login as Mock).mockRejectedValue(new Error('the login failed'));
       });
 
       it('does not emit success', async () => {
