@@ -1,4 +1,4 @@
-# Ionic Customer Success Demo - Secure Storage with Identity Vault
+# Ionic Customer Success Demo - Secure Storage with Identity Vault and Auth Connect
 
 The scenario modeled here is where the application has a need for:
 
