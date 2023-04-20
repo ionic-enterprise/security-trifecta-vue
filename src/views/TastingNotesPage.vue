@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page ref="page">
     <ion-header :transparent="true">
       <ion-toolbar>
         <ion-title>Tasting Notes</ion-title>
@@ -91,6 +91,7 @@ const { notes, refresh, remove } = useTastingNotes();
 const { logout } = useAuth();
 const { load } = usePreferences();
 const router = useRouter();
+const page = ref(null);
 const syncComplete = ref<boolean>(false);
 const syncDatabase = useSync();
 
@@ -102,6 +103,7 @@ const logoutClicked = async (): Promise<void> => {
 const presentNoteEditor = async (evt: Event, noteId?: number) => {
   const modal = await modalController.create({
     component: AppTastingNoteEditor,
+    presentingElement: (page.value as any).$el,
     componentProps: { noteId },
     backdropDismiss: false,
   });
