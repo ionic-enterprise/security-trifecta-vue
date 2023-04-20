@@ -43,6 +43,14 @@
         </ion-fab-button>
       </ion-fab>
     </ion-content>
+    <ion-toast
+      :isOpen="syncComplete"
+      message="Sync is complete!"
+      color="success"
+      :duration="2000"
+      position="middle"
+      @didDismiss="syncComplete = false"
+    ></ion-toast>
   </ion-page>
 </template>
 
@@ -63,6 +71,7 @@ import {
   IonList,
   IonPage,
   IonTitle,
+  IonToast,
   IonToggle,
   IonToolbar,
   modalController,
@@ -75,12 +84,14 @@ import { logOutOutline, sync } from 'ionicons/icons';
 import { useAuth } from '@/composables/auth';
 import { useSync } from '@/composables/sync';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
 const { prefersDarkMode } = usePreferences();
 const { notes, refresh, remove } = useTastingNotes();
 const { logout } = useAuth();
 const { load } = usePreferences();
 const router = useRouter();
+const syncComplete = ref<boolean>(false);
 const syncDatabase = useSync();
 
 const logoutClicked = async (): Promise<void> => {
@@ -99,6 +110,7 @@ const presentNoteEditor = async (evt: Event, noteId?: number) => {
 
 const syncClicked = async () => {
   await syncDatabase();
+  syncComplete.value = true;
   await refresh();
 };
 
