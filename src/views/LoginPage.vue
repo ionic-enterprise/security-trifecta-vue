@@ -10,6 +10,7 @@
       />
       <AppLoginCard v-else class="auth-card" @success="onLoginSuccess" data-testid="login-card" />
     </ion-content>
+    <ion-loading :isOpen="syncing" message="Syncing..."></ion-loading>
   </ion-page>
 </template>
 
@@ -18,20 +19,23 @@ import AppLoginCard from '@/components/AppLoginCard.vue';
 import AppUnlockCard from '@/components/AppUnlockCard.vue';
 import { useSessionVault } from '@/composables/session-vault';
 import { useSync } from '@/composables/sync';
-import { IonContent, IonPage } from '@ionic/vue';
+import { IonContent, IonLoading, IonPage } from '@ionic/vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const { canUnlock: canUnlockSession } = useSessionVault();
 const router = useRouter();
 const canUnlock = ref(false);
+const syncing = ref(false);
 
 canUnlockSession().then((x: boolean) => (canUnlock.value = x));
 
 const onLoginSuccess = async () => {
+  syncing.value = true;
   const sync = useSync();
   await sync();
   router.replace('/');
+  syncing.value = false;
 };
 
 const onUnlocked = async () => {

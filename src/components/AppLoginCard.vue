@@ -28,6 +28,7 @@
       position="middle"
       @didDismiss="loginFailed = false"
     ></ion-toast>
+    <ion-loading :isOpen="authenticating" message="Authenticating..."></ion-loading>
   </ion-card>
 </template>
 
@@ -43,6 +44,7 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonIcon,
+  IonLoading,
   IonSelect,
   IonSelectOption,
   IonToast,
@@ -56,6 +58,7 @@ const displayUnlockOptions = canUseLocking();
 
 const emit = defineEmits(['success']);
 
+const authenticating = ref<boolean>(false);
 const loginFailed = ref<boolean>(false);
 
 const unlockMode = ref<UnlockMode>('SessionPIN');
@@ -89,11 +92,14 @@ Device.isBiometricsEnabled().then((enabled: boolean) => {
 
 const signinClicked = async () => {
   try {
+    authenticating.value = true;
     await login();
     await setUnlockMode(unlockMode.value);
     emit('success');
   } catch (err) {
     loginFailed.value = true;
+  } finally {
+    authenticating.value = false;
   }
 };
 </script>
