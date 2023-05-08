@@ -339,8 +339,8 @@ describe('useAuth', () => {
         clientId: '64p9c53l5thd5dikra675suvq9',
         discoveryUrl:
           'https://cognito-idp.us-east-2.amazonaws.com/us-east-2_YU8VQe29z/.well-known/openid-configuration',
-        redirectUri: 'msauth://login',
-        logoutUrl: 'msauth://login',
+        redirectUri: 'msauth://auth-action-complete',
+        logoutUrl: 'msauth://auth-action-complete',
         scope: 'openid email profile',
         audience: '',
       });

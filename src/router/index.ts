@@ -14,6 +14,10 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/auth-action-complete',
+    component: () => import('@/views/AuthActionCompletePage.vue'),
+  },
+  {
     path: '/login',
     component: () => import('@/views/LoginPage.vue'),
   },

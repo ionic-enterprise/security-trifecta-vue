@@ -3,7 +3,7 @@ import { AuthConnect, AuthResult, CognitoProvider, ProviderOptions, TokenType } 
 import { isPlatform } from '@ionic/vue';
 
 const isMobile = isPlatform('hybrid');
-const url = isMobile ? 'msauth://login' : 'http://localhost:8100/login';
+const url = isMobile ? 'msauth://auth-action-complete' : 'http://localhost:8100/auth-action-complete';
 
 const options: ProviderOptions = {
   clientId: '64p9c53l5thd5dikra675suvq9',
