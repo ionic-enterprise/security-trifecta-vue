@@ -1,5 +1,7 @@
 # Ionic Customer Success Demo - Secure Storage with Identity Vault and Auth Connect
 
+**note:** this repo has been archived. please see the [Vue Tutorials and Demos Repo](https://github.com/ionic-enterprise/tutorials-and-demos-vue).
+
 The scenario modeled here is where the application has a need for:
 
 - Securely storing private data using an offline-first strategy.
